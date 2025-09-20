@@ -27,10 +27,7 @@ extern crate core_foundation;
 // Note: Modules will be implemented in subsequent tasks
 
 // Data types and structures
-pub mod types {
-    //! Core data types for mindmap operations
-    // Module placeholder - will be implemented in Task 3
-}
+pub mod types;
 
 pub mod models {
     //! Data models for nodes, edges, and documents
