@@ -39,10 +39,7 @@ pub mod layout {
     // Module placeholder - will be implemented in Tasks 12-14
 }
 
-pub mod search {
-    //! Search functionality for node content
-    // Module placeholder - will be implemented in Task 11
-}
+pub mod search;
 
 // Data persistence and I/O
 #[cfg(feature = "sqlite")]
