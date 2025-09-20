@@ -5,6 +5,8 @@
 
 pub mod graph;
 pub mod traversal;
+pub mod operations;
 
 pub use graph::*;
 pub use traversal::*;
+pub use operations::*;
