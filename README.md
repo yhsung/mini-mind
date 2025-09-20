@@ -1,0 +1,2 @@
+# mini-mind
+mind map
