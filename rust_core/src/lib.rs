@@ -32,10 +32,7 @@ pub mod types;
 pub mod models;
 
 // Graph operations and algorithms
-pub mod graph {
-    //! Graph data structures and operations
-    // Module placeholder - will be implemented in Tasks 9-10
-}
+pub mod graph;
 
 pub mod layout {
     //! Layout algorithms for node positioning
