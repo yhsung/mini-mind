@@ -34,10 +34,7 @@ pub mod models;
 // Graph operations and algorithms
 pub mod graph;
 
-pub mod layout {
-    //! Layout algorithms for node positioning
-    // Module placeholder - will be implemented in Tasks 12-14
-}
+pub mod layout;
 
 pub mod search;
 
