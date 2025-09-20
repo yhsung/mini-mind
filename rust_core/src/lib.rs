@@ -29,10 +29,7 @@ extern crate core_foundation;
 // Data types and structures
 pub mod types;
 
-pub mod models {
-    //! Data models for nodes, edges, and documents
-    // Module placeholder - will be implemented in Tasks 6-8
-}
+pub mod models;
 
 // Graph operations and algorithms
 pub mod graph {
