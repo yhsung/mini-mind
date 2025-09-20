@@ -9,6 +9,9 @@ use std::fmt;
 /// Type alias for coordinate values
 pub type Coordinate = f64;
 
+/// Type alias for position (same as Point)
+pub type Position = Point;
+
 /// 2D point with x and y coordinates
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Point {
