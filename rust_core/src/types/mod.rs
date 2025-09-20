@@ -23,6 +23,9 @@ pub type EdgeId = Uuid;
 /// Type alias for document identifiers
 pub type DocumentId = Uuid;
 
+/// Type alias for mindmap identifiers
+pub type MindmapId = Uuid;
+
 /// Type alias for coordinate values (floating point)
 pub type Coordinate = f64;
 
@@ -82,6 +85,11 @@ pub mod utils {
 
     /// Generate a new UUID for documents
     pub fn new_document_id() -> DocumentId {
+        Uuid::new_v4()
+    }
+
+    /// Generate a new UUID for mindmaps
+    pub fn new_mindmap_id() -> MindmapId {
         Uuid::new_v4()
     }
 
