@@ -48,56 +48,56 @@ L **Bad Examples (Too Broad)**:
 
 ### Phase 1: Project Setup and Core Infrastructure
 
-- [ ] 1. Create Rust workspace Cargo.toml in rust_core/ **[GitHub Issue #1](https://github.com/yhsung/mini-mind/issues/1)**
+- [x] 1. Create Rust workspace Cargo.toml in rust_core/ **[GitHub Issue #1](https://github.com/yhsung/mini-mind/issues/1)**
   - File: rust_core/Cargo.toml
   - Initialize Cargo workspace with core dependencies (serde, uuid, chrono, rusqlite)
   - Configure target platforms for cross-compilation (macOS, Windows, iOS)
   - Set workspace metadata and edition
   - _Requirements: REQ-MM-008_
 
-- [ ] 2. Create Rust library entry point in rust_core/src/lib.rs **[GitHub Issue #2](https://github.com/yhsung/mini-mind/issues/2)**
+- [x] 2. Create Rust library entry point in rust_core/src/lib.rs **[GitHub Issue #2](https://github.com/yhsung/mini-mind/issues/2)**
   - File: rust_core/src/lib.rs
   - Set up basic module structure with pub mod declarations
   - Define public API exports for FFI interface
   - Add conditional compilation flags for different platforms
   - _Requirements: REQ-MM-008_
 
-- [ ] 3. Create types module structure in rust_core/src/types/mod.rs **[GitHub Issue #3](https://github.com/yhsung/mini-mind/issues/3)**
+- [x] 3. Create types module structure in rust_core/src/types/mod.rs **[GitHub Issue #3](https://github.com/yhsung/mini-mind/issues/3)**
   - File: rust_core/src/types/mod.rs
   - Set up types module with public exports for ids and position
   - Add common type aliases and utility functions
   - Define module organization for data types
   - _Requirements: REQ-MM-001_
 
-- [ ] 4. Create ID wrapper types in rust_core/src/types/ids.rs **[GitHub Issue #4](https://github.com/yhsung/mini-mind/issues/4)**
+- [x] 4. Create ID wrapper types in rust_core/src/types/ids.rs **[GitHub Issue #4](https://github.com/yhsung/mini-mind/issues/4)**
   - File: rust_core/src/types/ids.rs
   - Define NodeId, EdgeId, MindmapId wrapper types using UUID v4
   - Implement Display, Debug, and Hash traits for ID types
   - Add Serialize/Deserialize derives for all ID types
   - _Requirements: REQ-MM-001_
 
-- [ ] 5. Create Position type in rust_core/src/types/position.rs **[GitHub Issue #5](https://github.com/yhsung/mini-mind/issues/5)**
+- [x] 5. Create Position type in rust_core/src/types/position.rs **[GitHub Issue #5](https://github.com/yhsung/mini-mind/issues/5)**
   - File: rust_core/src/types/position.rs
   - Implement Position struct with f64 x, y coordinates
   - Add basic geometric operations (distance, translation, scaling)
   - Include Serialize/Deserialize and Default implementations
   - _Requirements: REQ-MM-003_
 
-- [ ] 6. Implement Node model in rust_core/src/models/node.rs **[GitHub Issue #6](https://github.com/yhsung/mini-mind/issues/6)**
+- [x] 6. Implement Node model in rust_core/src/models/node.rs **[GitHub Issue #6](https://github.com/yhsung/mini-mind/issues/6)**
   - File: rust_core/src/models/node.rs
   - Create Node struct with all required fields (id, parent_id, text, style, position, attachments, tags, timestamps, metadata)
   - Implement Default trait and constructor methods
   - Add validation methods for text content and parent relationships
   - _Requirements: REQ-MM-001, REQ-MM-006_
 
-- [ ] 7. Implement Edge model in rust_core/src/models/edge.rs **[GitHub Issue #7](https://github.com/yhsung/mini-mind/issues/7)**
+- [x] 7. Implement Edge model in rust_core/src/models/edge.rs **[GitHub Issue #7](https://github.com/yhsung/mini-mind/issues/7)**
   - File: rust_core/src/models/edge.rs
   - Create Edge struct with id, from_node, to_node, edge_type, label, style, timestamps
   - Define EdgeType enum (ParentChild, CrossLink, etc.)
   - Implement validation for edge relationships and cycles
   - _Requirements: REQ-MM-001_
 
-- [ ] 8. Create NodeStyle and EdgeStyle models in rust_core/src/models/style.rs **[GitHub Issue #8](https://github.com/yhsung/mini-mind/issues/8)**
+- [x] 8. Create NodeStyle and EdgeStyle models in rust_core/src/models/style.rs **[GitHub Issue #8](https://github.com/yhsung/mini-mind/issues/8)**
   - File: rust_core/src/models/style.rs
   - Implement NodeStyle struct with color, font, shape, padding properties
   - Create EdgeStyle struct with line style, arrow, and color properties
@@ -106,7 +106,7 @@ L **Bad Examples (Too Broad)**:
 
 ### Phase 2: Graph Engine and Core Operations
 
-- [ ] 9. Create graph data structure in rust_core/src/graph/mod.rs **[GitHub Issue #9](https://github.com/yhsung/mini-mind/issues/9)**
+- [x] 9. Create graph data structure in rust_core/src/graph/mod.rs **[GitHub Issue #9](https://github.com/yhsung/mini-mind/issues/9)**
   - Files: rust_core/src/graph/mod.rs, rust_core/src/graph/graph.rs
   - Implement Graph struct using HashMap<NodeId, Node> and HashMap<EdgeId, Edge>
   - Add methods for node/edge insertion, removal, and validation
@@ -114,7 +114,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-001_
   - _Leverage: rust_core/src/models/node.rs, rust_core/src/models/edge.rs_
 
-- [ ] 10. Add graph operations in rust_core/src/graph/operations.rs **[GitHub Issue #10](https://github.com/yhsung/mini-mind/issues/10)**
+- [x] 10. Add graph operations in rust_core/src/graph/operations.rs **[GitHub Issue #10](https://github.com/yhsung/mini-mind/issues/10)**
   - File: rust_core/src/graph/operations.rs
   - Implement add_node, update_node, delete_node methods with relationship management
   - Add edge creation and validation with cycle detection
@@ -122,7 +122,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-001, REQ-MM-003_
   - _Leverage: rust_core/src/graph/graph.rs_
 
-- [ ] 11. Create search functionality in rust_core/src/search/mod.rs **[GitHub Issue #11](https://github.com/yhsung/mini-mind/issues/11)**
+- [x] 11. Create search functionality in rust_core/src/search/mod.rs **[GitHub Issue #11](https://github.com/yhsung/mini-mind/issues/11)**
   - Files: rust_core/src/search/mod.rs, rust_core/src/search/fuzzy.rs
   - Implement fuzzy text search using simple string matching algorithms
   - Create SearchResult struct with node reference and match score
@@ -130,7 +130,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-004_
   - _Leverage: rust_core/src/graph/graph.rs_
 
-- [ ] 12. Implement radial layout algorithm in rust_core/src/layout/radial.rs **[GitHub Issue #12](https://github.com/yhsung/mini-mind/issues/12)**
+- [x] 12. Implement radial layout algorithm in rust_core/src/layout/radial.rs **[GitHub Issue #12](https://github.com/yhsung/mini-mind/issues/12)**
   - Files: rust_core/src/layout/mod.rs, rust_core/src/layout/radial.rs
   - Create LayoutEngine trait with calculate_layout method
   - Implement radial layout using polar coordinates from root node
@@ -138,7 +138,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-002_
   - _Leverage: rust_core/src/types/position.rs, rust_core/src/graph/graph.rs_
 
-- [ ] 13. Implement tree layout algorithm in rust_core/src/layout/tree.rs **[GitHub Issue #13](https://github.com/yhsung/mini-mind/issues/13)**
+- [x] 13. Implement tree layout algorithm in rust_core/src/layout/tree.rs **[GitHub Issue #13](https://github.com/yhsung/mini-mind/issues/13)**
   - File: rust_core/src/layout/tree.rs
   - Create hierarchical tree layout with level-based positioning
   - Implement node spacing calculation to avoid overlaps
@@ -146,7 +146,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-002_
   - _Leverage: rust_core/src/layout/radial.rs_
 
-- [ ] 14. Implement force-directed layout in rust_core/src/layout/force.rs **[GitHub Issue #14](https://github.com/yhsung/mini-mind/issues/14)**
+- [x] 14. Implement force-directed layout in rust_core/src/layout/force.rs **[GitHub Issue #14](https://github.com/yhsung/mini-mind/issues/14)**
   - File: rust_core/src/layout/force.rs
   - Create basic force-directed algorithm with spring forces
   - Implement iterative position updates with configurable parameters
@@ -156,14 +156,14 @@ L **Bad Examples (Too Broad)**:
 
 ### Phase 3: Data Persistence and Storage
 
-- [ ] 15. Create persistence module in rust_core/src/persistence/mod.rs **[GitHub Issue #15](https://github.com/yhsung/mini-mind/issues/15)**
+- [x] 15. Create persistence module in rust_core/src/persistence/mod.rs **[GitHub Issue #15](https://github.com/yhsung/mini-mind/issues/15)**
   - Files: rust_core/src/persistence/mod.rs, rust_core/src/persistence/sqlite.rs
   - Set up SQLite database schema for nodes, edges, and mindmaps
   - Implement database connection management and migration support
   - Create basic CRUD operations for database entities
   - _Requirements: REQ-MM-007_
 
-- [ ] 16. Implement MindmapDocument model in rust_core/src/models/document.rs **[GitHub Issue #16](https://github.com/yhsung/mini-mind/issues/16)**
+- [x] 16. Implement MindmapDocument model in rust_core/src/models/document.rs **[GitHub Issue #16](https://github.com/yhsung/mini-mind/issues/16)**
   - File: rust_core/src/models/document.rs
   - Create MindmapDocument struct with id, title, root_node, nodes, edges, view_state, settings
   - Implement serialization/deserialization for complete documents
@@ -171,7 +171,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-007_
   - _Leverage: rust_core/src/models/node.rs, rust_core/src/models/edge.rs_
 
-- [ ] 17. Add persistence manager in rust_core/src/persistence/manager.rs **[GitHub Issue #17](https://github.com/yhsung/mini-mind/issues/17)**
+- [x] 17. Add persistence manager in rust_core/src/persistence/manager.rs **[GitHub Issue #17](https://github.com/yhsung/mini-mind/issues/17)**
   - File: rust_core/src/persistence/manager.rs
   - Implement PersistenceManager struct with save/load methods
   - Add auto-save functionality with configurable intervals
