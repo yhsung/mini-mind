@@ -30,11 +30,14 @@ pub struct Document {
     /// Unique identifier for this document
     pub id: DocumentId,
 
-    /// Document metadata
-    pub metadata: DocumentMetadata,
+    /// Document title
+    pub title: String,
 
     /// ID of the root node (entry point of the mindmap)
-    pub root_node_id: Option<NodeId>,
+    pub root_node: NodeId,
+
+    /// Document metadata
+    pub metadata: DocumentMetadata,
 
     /// When this document was created
     pub created_at: Timestamp,
@@ -50,21 +53,23 @@ pub struct Document {
 }
 
 impl Document {
-    /// Create a new empty document with the given title
-    pub fn new(title: impl Into<String>) -> Self {
+    /// Create a new document with title and root node ID
+    pub fn new(title: impl Into<String>, root_node: NodeId) -> Self {
         let now = chrono::Utc::now();
+        let title_str = title.into();
 
         Self {
             id: DocumentId::new(),
+            title: title_str.clone(),
+            root_node,
             metadata: DocumentMetadata {
-                title: title.into(),
+                title: title_str,
                 description: None,
                 author: None,
                 version: "1.0".to_string(),
                 tags: Vec::new(),
                 custom: HashMap::new(),
             },
-            root_node_id: None,
             created_at: now,
             updated_at: now,
             last_saved_at: None,
@@ -74,19 +79,15 @@ impl Document {
 
     /// Set the root node for this document
     pub fn set_root_node(&mut self, node_id: NodeId) {
-        self.root_node_id = Some(node_id);
-        self.mark_dirty();
-    }
-
-    /// Clear the root node
-    pub fn clear_root_node(&mut self) {
-        self.root_node_id = None;
+        self.root_node = node_id;
         self.mark_dirty();
     }
 
     /// Update the document title
     pub fn set_title(&mut self, title: impl Into<String>) {
-        self.metadata.title = title.into();
+        let title_str = title.into();
+        self.title = title_str.clone();
+        self.metadata.title = title_str;
         self.mark_dirty();
     }
 
@@ -154,9 +155,9 @@ impl Document {
         self.last_saved_at = Some(chrono::Utc::now());
     }
 
-    /// Check if the document has a root node
-    pub fn has_root_node(&self) -> bool {
-        self.root_node_id.is_some()
+    /// Get the root node ID
+    pub fn get_root_node(&self) -> NodeId {
+        self.root_node
     }
 
     /// Validate the document
@@ -191,32 +192,30 @@ mod tests {
 
     #[test]
     fn test_document_creation() {
-        let doc = Document::new("Test Document");
+        let root_node = NodeId::new();
+        let doc = Document::new("Test Document", root_node);
 
         assert_eq!(doc.metadata.title, "Test Document");
-        assert!(!doc.has_root_node());
+        assert_eq!(doc.get_root_node(), root_node);
         assert!(!doc.is_dirty);
         assert!(doc.last_saved_at.is_none());
     }
 
     #[test]
     fn test_root_node_management() {
-        let mut doc = Document::new("Test");
-        let node_id = NodeId::new();
+        let initial_node = NodeId::new();
+        let mut doc = Document::new("Test", initial_node);
+        let new_node_id = NodeId::new();
 
-        doc.set_root_node(node_id);
-        assert!(doc.has_root_node());
-        assert_eq!(doc.root_node_id, Some(node_id));
+        doc.set_root_node(new_node_id);
+        assert_eq!(doc.get_root_node(), new_node_id);
         assert!(doc.is_dirty);
-
-        doc.clear_root_node();
-        assert!(!doc.has_root_node());
-        assert_eq!(doc.root_node_id, None);
     }
 
     #[test]
     fn test_metadata_updates() {
-        let mut doc = Document::new("Original Title");
+        let root_node = NodeId::new();
+        let mut doc = Document::new("Original Title", root_node);
 
         doc.set_title("New Title");
         assert_eq!(doc.metadata.title, "New Title");
@@ -231,7 +230,8 @@ mod tests {
 
     #[test]
     fn test_tag_management() {
-        let mut doc = Document::new("Test");
+        let root_node = NodeId::new();
+        let mut doc = Document::new("Test", root_node);
 
         doc.add_tag("important");
         doc.add_tag("urgent");
@@ -249,7 +249,8 @@ mod tests {
 
     #[test]
     fn test_custom_metadata() {
-        let mut doc = Document::new("Test");
+        let root_node = NodeId::new();
+        let mut doc = Document::new("Test", root_node);
 
         doc.set_custom_metadata("key1", "value1");
         assert_eq!(doc.get_custom_metadata("key1"), Some(&"value1".to_string()));
@@ -260,7 +261,8 @@ mod tests {
 
     #[test]
     fn test_dirty_tracking() {
-        let mut doc = Document::new("Test");
+        let root_node = NodeId::new();
+        let mut doc = Document::new("Test", root_node);
         assert!(!doc.is_dirty);
 
         doc.mark_dirty();
@@ -273,7 +275,8 @@ mod tests {
 
     #[test]
     fn test_document_validation() {
-        let mut doc = Document::new("Valid Title");
+        let root_node = NodeId::new();
+        let mut doc = Document::new("Valid Title", root_node);
         assert!(doc.validate().is_ok());
 
         doc.metadata.title = "".to_string();

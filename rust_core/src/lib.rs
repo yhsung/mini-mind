@@ -42,17 +42,11 @@ pub mod search;
 #[cfg(feature = "sqlite")]
 pub mod persistence;
 
-pub mod io {
-    //! File format import/export
-    // Module placeholder - will be implemented in Task 18
-}
+pub mod io;
 
 // FFI and platform integration
 #[cfg(feature = "flutter_rust_bridge_feature")]
-pub mod ffi {
-    //! Foreign Function Interface for Flutter integration
-    // Module placeholder - will be implemented in Tasks 19-23
-}
+pub mod ffi;
 
 // Performance monitoring
 #[cfg(feature = "metrics")]
@@ -62,7 +56,8 @@ pub mod metrics {
 }
 
 // Public API exports for FFI interface
-// These will be populated as modules are implemented
+#[cfg(feature = "flutter_rust_bridge_feature")]
+pub use ffi::{MindmapFFI, MindmapBridge, BridgeError, create_bridge};
 
 /// Library version
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

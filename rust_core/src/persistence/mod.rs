@@ -9,6 +9,9 @@
 #[cfg(feature = "sqlite")]
 pub mod database_simple;
 
+#[cfg(feature = "sqlite")]
+pub mod manager;
+
 //#[cfg(feature = "sqlite")]
 //pub mod migrations;
 
@@ -20,6 +23,9 @@ pub mod database_simple;
 
 #[cfg(feature = "sqlite")]
 pub use database_simple::*;
+
+#[cfg(feature = "sqlite")]
+pub use manager::*;
 
 //#[cfg(feature = "sqlite")]
 //pub use migrations::*;

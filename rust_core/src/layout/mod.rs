@@ -273,6 +273,81 @@ pub mod utils {
     }
 }
 
+/// Concrete layout engine that can handle multiple layout algorithms
+pub struct LayoutEngineImpl {
+    current_layout: LayoutType,
+}
+
+impl LayoutEngineImpl {
+    /// Create a new layout engine with default layout type
+    pub fn new() -> Self {
+        Self {
+            current_layout: LayoutType::Radial,
+        }
+    }
+
+    /// Create a layout engine with specific layout type
+    pub fn with_layout_type(layout_type: LayoutType) -> Self {
+        Self {
+            current_layout: layout_type,
+        }
+    }
+
+    /// Set the layout type
+    pub fn set_layout_type(&mut self, layout_type: LayoutType) {
+        self.current_layout = layout_type;
+    }
+
+    /// Calculate layout for a graph using the specified layout type
+    pub fn calculate_layout(&self, graph: &Graph, layout_type: LayoutType) -> MindmapResult<LayoutResult> {
+        let config = LayoutConfig::default();
+
+        match layout_type {
+            LayoutType::Radial => {
+                let radial_engine = radial::RadialLayoutEngine::default();
+                radial_engine.calculate_layout(graph, &config)
+            }
+            LayoutType::Tree => {
+                let tree_engine = tree::TreeLayoutEngine::default();
+                tree_engine.calculate_layout(graph, &config)
+            }
+            LayoutType::Force => {
+                let force_engine = force::ForceLayoutEngine::default();
+                force_engine.calculate_layout(graph, &config)
+            }
+        }
+    }
+}
+
+impl Default for LayoutEngineImpl {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl LayoutEngine for LayoutEngineImpl {
+    fn calculate_layout(&self, graph: &Graph, config: &LayoutConfig) -> MindmapResult<LayoutResult> {
+        match self.current_layout {
+            LayoutType::Radial => {
+                let radial_engine = radial::RadialLayoutEngine::default();
+                radial_engine.calculate_layout(graph, config)
+            }
+            LayoutType::Tree => {
+                let tree_engine = tree::TreeLayoutEngine::default();
+                tree_engine.calculate_layout(graph, config)
+            }
+            LayoutType::Force => {
+                let force_engine = force::ForceLayoutEngine::default();
+                force_engine.calculate_layout(graph, config)
+            }
+        }
+    }
+
+    fn layout_type(&self) -> LayoutType {
+        self.current_layout
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

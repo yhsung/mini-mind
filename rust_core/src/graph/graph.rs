@@ -40,7 +40,7 @@ impl Graph {
         // If node has a parent, validate that the parent exists
         if let Some(parent_id) = node.parent_id {
             if !self.nodes.contains_key(&parent_id) {
-                return Err(MindmapError::NodeNotFound { id: parent_id.as_uuid() });
+                return Err(MindmapError::NodeNotFound { id: parent_id });
             }
         }
 
@@ -59,7 +59,7 @@ impl Graph {
     /// Remove a node and all its associated edges
     pub fn remove_node(&mut self, node_id: NodeId) -> MindmapResult<Node> {
         let node = self.nodes.remove(&node_id)
-            .ok_or(MindmapError::NodeNotFound { id: node_id.as_uuid() })?;
+            .ok_or(MindmapError::NodeNotFound { id: node_id })?;
 
         // Remove all edges connected to this node
         let outgoing = self.outgoing_edges.remove(&node_id).unwrap_or_default();
@@ -102,13 +102,13 @@ impl Graph {
 
         // Check if node exists
         if !self.nodes.contains_key(&node.id) {
-            return Err(MindmapError::NodeNotFound { id: node.id.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: node.id });
         }
 
         // If node has a parent, validate that the parent exists
         if let Some(parent_id) = node.parent_id {
             if !self.nodes.contains_key(&parent_id) {
-                return Err(MindmapError::NodeNotFound { id: parent_id.as_uuid() });
+                return Err(MindmapError::NodeNotFound { id: parent_id });
             }
         }
 
@@ -123,10 +123,10 @@ impl Graph {
 
         // Check that both nodes exist
         if !self.nodes.contains_key(&edge.from_node) {
-            return Err(MindmapError::NodeNotFound { id: edge.from_node.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: edge.from_node });
         }
         if !self.nodes.contains_key(&edge.to_node) {
-            return Err(MindmapError::NodeNotFound { id: edge.to_node.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: edge.to_node });
         }
 
         let edge_id = edge.id;
@@ -148,7 +148,7 @@ impl Graph {
     /// Remove an edge from the graph
     pub fn remove_edge(&mut self, edge_id: EdgeId) -> MindmapResult<Edge> {
         let edge = self.edges.remove(&edge_id)
-            .ok_or(MindmapError::EdgeNotFound { id: edge_id.as_uuid() })?;
+            .ok_or(MindmapError::EdgeNotFound { id: edge_id })?;
 
         // Update edge indices
         if let Some(outgoing) = self.outgoing_edges.get_mut(&edge.from_node) {
@@ -293,7 +293,7 @@ impl Graph {
             // Check parent exists if specified
             if let Some(parent_id) = node.parent_id {
                 if !self.nodes.contains_key(&parent_id) {
-                    return Err(MindmapError::NodeNotFound { id: parent_id.as_uuid() });
+                    return Err(MindmapError::NodeNotFound { id: parent_id });
                 }
             }
         }
@@ -304,10 +304,10 @@ impl Graph {
 
             // Check that both endpoint nodes exist
             if !self.nodes.contains_key(&edge.from_node) {
-                return Err(MindmapError::NodeNotFound { id: edge.from_node.as_uuid() });
+                return Err(MindmapError::NodeNotFound { id: edge.from_node });
             }
             if !self.nodes.contains_key(&edge.to_node) {
-                return Err(MindmapError::NodeNotFound { id: edge.to_node.as_uuid() });
+                return Err(MindmapError::NodeNotFound { id: edge.to_node });
             }
         }
 

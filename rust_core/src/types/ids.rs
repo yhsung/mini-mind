@@ -232,7 +232,7 @@ mod tests {
         assert_eq!(node_id, parsed);
 
         // Test parsing without prefix
-        let uuid_str = node_id.as_uuid().to_string();
+        let uuid_str = node_id.to_string();
         let parsed = NodeId::from_str(&uuid_str).unwrap();
         assert_eq!(node_id, parsed);
     }

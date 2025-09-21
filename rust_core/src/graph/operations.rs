@@ -41,7 +41,7 @@ impl Graph {
     pub fn update_node_with_validation(&mut self, mut node: Node) -> MindmapResult<()> {
         // Check if node exists
         let existing_node = self.get_node(node.id)
-            .ok_or(MindmapError::NodeNotFound { id: node.id.as_uuid() })?;
+            .ok_or(MindmapError::NodeNotFound { id: node.id })?;
 
         // Validate node content
         node.validate().map_err(|msg| MindmapError::InvalidOperation { message: msg })?;
@@ -64,7 +64,7 @@ impl Graph {
     pub fn delete_node_with_cleanup(&mut self, node_id: NodeId) -> MindmapResult<Node> {
         // Check if node exists
         if !self.contains_node(node_id) {
-            return Err(MindmapError::NodeNotFound { id: node_id.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: node_id });
         }
 
         // Get all children of this node
@@ -97,7 +97,7 @@ impl Graph {
     /// Move a node to a new parent
     pub fn move_node(&mut self, node_id: NodeId, new_parent_id: Option<NodeId>) -> MindmapResult<()> {
         let mut node = self.get_node(node_id)
-            .ok_or(MindmapError::NodeNotFound { id: node_id.as_uuid() })?
+            .ok_or(MindmapError::NodeNotFound { id: node_id })?
             .clone();
 
         // Validate new parent relationship
@@ -149,7 +149,7 @@ impl Graph {
     fn validate_parent_relationship(&self, child_id: NodeId, parent_id: NodeId) -> MindmapResult<()> {
         // Parent must exist
         if !self.contains_node(parent_id) {
-            return Err(MindmapError::NodeNotFound { id: parent_id.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: parent_id });
         }
 
         // Child cannot be its own parent
@@ -201,10 +201,10 @@ impl Graph {
 
         // Check that both nodes exist
         if !self.contains_node(edge.from_node) {
-            return Err(MindmapError::NodeNotFound { id: edge.from_node.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: edge.from_node });
         }
         if !self.contains_node(edge.to_node) {
-            return Err(MindmapError::NodeNotFound { id: edge.to_node.as_uuid() });
+            return Err(MindmapError::NodeNotFound { id: edge.to_node });
         }
 
         // Check for duplicate edges
@@ -228,7 +228,7 @@ impl Graph {
     pub fn update_edge_with_validation(&mut self, mut edge: Edge) -> MindmapResult<()> {
         // Check if edge exists
         if !self.contains_edge(edge.id) {
-            return Err(MindmapError::EdgeNotFound { id: edge.id.as_uuid() });
+            return Err(MindmapError::EdgeNotFound { id: edge.id });
         }
 
         // Validate edge content

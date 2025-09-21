@@ -5,9 +5,11 @@
 
 pub mod fuzzy;
 pub mod index;
+pub mod engine;
 
 pub use fuzzy::*;
 pub use index::*;
+pub use engine::*;
 
 use crate::graph::Graph;
 use crate::models::Node;

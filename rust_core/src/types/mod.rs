@@ -14,17 +14,7 @@ pub mod position;
 pub use ids::*;
 pub use position::*;
 
-/// Type alias for node identifiers
-pub type NodeId = Uuid;
-
-/// Type alias for edge identifiers
-pub type EdgeId = Uuid;
-
-/// Type alias for document identifiers
-pub type DocumentId = Uuid;
-
-/// Type alias for mindmap identifiers
-pub type MindmapId = Uuid;
+// ID types are now defined in the ids module as proper structs
 
 /// Type alias for coordinate values (floating point)
 pub type Coordinate = f64;
@@ -73,24 +63,24 @@ pub enum MindmapError {
 pub mod utils {
     use super::*;
 
-    /// Generate a new UUID for nodes
+    /// Generate a new NodeId
     pub fn new_node_id() -> NodeId {
-        Uuid::new_v4()
+        NodeId::new()
     }
 
-    /// Generate a new UUID for edges
+    /// Generate a new EdgeId
     pub fn new_edge_id() -> EdgeId {
-        Uuid::new_v4()
+        EdgeId::new()
     }
 
-    /// Generate a new UUID for documents
+    /// Generate a new DocumentId
     pub fn new_document_id() -> DocumentId {
-        Uuid::new_v4()
+        DocumentId::new()
     }
 
-    /// Generate a new UUID for mindmaps
+    /// Generate a new MindmapId
     pub fn new_mindmap_id() -> MindmapId {
-        Uuid::new_v4()
+        MindmapId::new()
     }
 
     /// Convert RGB values to RGBA color
@@ -139,9 +129,10 @@ mod tests {
         let edge_id = new_edge_id();
         let doc_id = new_document_id();
 
-        assert_ne!(node_id, edge_id);
-        assert_ne!(edge_id, doc_id);
-        assert_ne!(node_id, doc_id);
+        // Test that IDs are unique by converting to strings
+        assert_ne!(node_id.to_string(), edge_id.to_string());
+        assert_ne!(edge_id.to_string(), doc_id.to_string());
+        assert_ne!(node_id.to_string(), doc_id.to_string());
     }
 
     #[test]

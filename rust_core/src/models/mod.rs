@@ -9,3 +9,6 @@ pub mod document;
 pub use node::*;
 pub use edge::*;
 pub use document::*;
+
+// Alias for FFI compatibility
+pub type MindmapDocument = Document;

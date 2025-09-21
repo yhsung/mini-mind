@@ -105,7 +105,7 @@ impl<'a> QueryExecutor<'a> {
 
         if let Some(ref doc_ids) = options.document_filter {
             for doc_id in doc_ids {
-                params.push(Box::new(doc_id.as_uuid().to_string()));
+                params.push(Box::new(doc_id.to_string()));
             }
         }
 
@@ -329,7 +329,7 @@ impl<'a> QueryExecutor<'a> {
         // Count nodes
         let node_count: i64 = self.connection.query_row(
             "SELECT COUNT(*) FROM document_nodes WHERE document_id = ?1",
-            params![document_id.as_uuid().to_string()],
+            params![document_id.to_string()],
             |row| row.get(0)
         ).unwrap_or(0);
         stats.insert("node_count".to_string(), node_count);
@@ -337,7 +337,7 @@ impl<'a> QueryExecutor<'a> {
         // Count edges
         let edge_count: i64 = self.connection.query_row(
             "SELECT COUNT(*) FROM document_edges WHERE document_id = ?1",
-            params![document_id.as_uuid().to_string()],
+            params![document_id.to_string()],
             |row| row.get(0)
         ).unwrap_or(0);
         stats.insert("edge_count".to_string(), edge_count);
@@ -361,7 +361,7 @@ impl<'a> QueryExecutor<'a> {
             )
             SELECT COALESCE(MAX(depth), 0) FROM node_depth
             "#,
-            params![document_id.as_uuid().to_string()],
+            params![document_id.to_string()],
             |row| row.get(0)
         ).unwrap_or(0);
         stats.insert("max_depth".to_string(), max_depth);
@@ -374,7 +374,7 @@ impl<'a> QueryExecutor<'a> {
             INNER JOIN document_nodes dn ON n.id = dn.node_id
             WHERE dn.document_id = ?1 AND n.parent_id IS NULL
             "#,
-            params![document_id.as_uuid().to_string()],
+            params![document_id.to_string()],
             |row| row.get(0)
         ).unwrap_or(0);
         stats.insert("root_count".to_string(), root_count);
