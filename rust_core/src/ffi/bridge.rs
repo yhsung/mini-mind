@@ -28,11 +28,11 @@ pub struct MindmapBridge {
     /// Current mindmap document
     document: Arc<RwLock<Option<MindmapDocument>>>,
     /// Graph engine for node and edge operations
-    graph: Arc<RwLock<Graph>>,
+    pub graph: Arc<RwLock<Graph>>,
     /// Layout engine for positioning algorithms
     layout_engine: Arc<LayoutEngineImpl>,
     /// Search engine for text and tag queries
-    search_engine: Arc<RwLock<SearchEngine>>,
+    pub search_engine: Arc<RwLock<SearchEngine>>,
     /// Performance metrics tracking
     metrics: Arc<RwLock<Vec<FfiPerformanceMetrics>>>,
 }
@@ -56,7 +56,7 @@ impl MindmapBridge {
     }
 
     /// Record performance metrics for an operation
-    fn record_metrics(&self, operation: &str, start_time: Instant, nodes_processed: u32) {
+    pub fn record_metrics(&self, operation: &str, start_time: Instant, nodes_processed: u32) {
         let duration = start_time.elapsed();
         let metrics = FfiPerformanceMetrics {
             operation: operation.to_string(),
@@ -96,12 +96,12 @@ impl MindmapBridge {
     }
 
     /// Parse string ID to UUID
-    fn parse_node_id(&self, id: &str) -> Result<NodeId, BridgeError> {
+    pub fn parse_node_id(&self, id: &str) -> Result<NodeId, BridgeError> {
         super::utils::parse_uuid(id).map(NodeId::from)
     }
 
     /// Convert internal node to FFI format
-    fn node_to_ffi(&self, node: &Node) -> FfiNodeData {
+    pub fn node_to_ffi(&self, node: &Node) -> FfiNodeData {
         node.clone().into()
     }
 }
