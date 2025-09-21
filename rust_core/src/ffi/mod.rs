@@ -18,11 +18,13 @@ pub mod dto;
 pub mod bridge;
 pub mod errors;
 pub mod node_ops;
+pub mod layout_ops;
 
 pub use dto::*;
 pub use bridge::*;
 pub use errors::*;
 pub use node_ops::*;
+pub use layout_ops::*;
 
 /// FFI-compatible error type for bridge communication
 #[derive(Debug, Clone, Serialize, Deserialize)]
