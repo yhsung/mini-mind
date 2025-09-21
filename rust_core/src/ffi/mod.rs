@@ -20,6 +20,7 @@ pub mod errors;
 pub mod node_ops;
 pub mod layout_ops;
 pub mod search_ops;
+pub mod file_ops;
 
 pub use dto::*;
 pub use bridge::*;
@@ -27,6 +28,7 @@ pub use errors::*;
 pub use node_ops::*;
 pub use layout_ops::*;
 pub use search_ops::*;
+pub use file_ops::*;
 
 /// FFI-compatible error type for bridge communication
 #[derive(Debug, Clone, Serialize, Deserialize)]

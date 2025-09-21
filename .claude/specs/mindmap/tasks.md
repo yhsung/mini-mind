@@ -179,7 +179,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-007_
   - _Leverage: rust_core/src/persistence/sqlite.rs, rust_core/src/models/document.rs_
 
-- [ ] 18. Create file format handlers in rust_core/src/io/mod.rs **[GitHub Issue #18](https://github.com/yhsung/mini-mind/issues/18)**
+- [x] 18. Create file format handlers in rust_core/src/io/mod.rs **[GitHub Issue #18](https://github.com/yhsung/mini-mind/issues/18)**
   - Files: rust_core/src/io/mod.rs, rust_core/src/io/opml.rs, rust_core/src/io/markdown.rs
   - Implement OPML import/export with node hierarchy preservation
   - Add Markdown outline import/export functionality
@@ -189,14 +189,14 @@ L **Bad Examples (Too Broad)**:
 
 ### Phase 4: FFI Bridge and Flutter Integration
 
-- [ ] 19. Set up Flutter-Rust bridge in rust_core/src/ffi/mod.rs **[GitHub Issue #19](https://github.com/yhsung/mini-mind/issues/19)**
+- [x] 19. Set up Flutter-Rust bridge in rust_core/src/ffi/mod.rs **[GitHub Issue #19](https://github.com/yhsung/mini-mind/issues/19)**
   - Files: rust_core/src/ffi/mod.rs, rust_core/Cargo.toml (add flutter_rust_bridge)
   - Configure flutter_rust_bridge dependencies and build setup
   - Define bridge error types and conversion utilities
   - Create basic FFI interface structure and exports
   - _Requirements: REQ-MM-008_
 
-- [ ] 20. Implement FFI node operations in rust_core/src/ffi/node_ops.rs **[GitHub Issue #20](https://github.com/yhsung/mini-mind/issues/20)**
+- [x] 20. Implement FFI node operations in rust_core/src/ffi/node_ops.rs **[GitHub Issue #20](https://github.com/yhsung/mini-mind/issues/20)**
   - File: rust_core/src/ffi/node_ops.rs
   - Create FFI functions for create_node, update_node_text, delete_node
   - Implement get_node_children and node hierarchy operations
@@ -204,7 +204,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-001_
   - _Leverage: rust_core/src/graph/operations.rs, rust_core/src/ffi/mod.rs_
 
-- [ ] 21. Add FFI layout operations in rust_core/src/ffi/layout_ops.rs **[GitHub Issue #21](https://github.com/yhsung/mini-mind/issues/21)**
+- [x] 21. Add FFI layout operations in rust_core/src/ffi/layout_ops.rs **[GitHub Issue #21](https://github.com/yhsung/mini-mind/issues/21)**
   - File: rust_core/src/ffi/layout_ops.rs
   - Implement calculate_layout FFI function with LayoutType parameter
   - Create update_node_position for manual positioning
@@ -212,7 +212,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-002, REQ-MM-003_
   - _Leverage: rust_core/src/layout/mod.rs, rust_core/src/ffi/mod.rs_
 
-- [ ] 22. Implement FFI search operations in rust_core/src/ffi/search_ops.rs **[GitHub Issue #22](https://github.com/yhsung/mini-mind/issues/22)**
+- [x] 22. Implement FFI search operations in rust_core/src/ffi/search_ops.rs **[GitHub Issue #22](https://github.com/yhsung/mini-mind/issues/22)**
   - File: rust_core/src/ffi/search_ops.rs
   - Create search_nodes FFI function with query string input
   - Implement search result serialization with match scores
@@ -220,7 +220,7 @@ L **Bad Examples (Too Broad)**:
   - _Requirements: REQ-MM-004_
   - _Leverage: rust_core/src/search/mod.rs, rust_core/src/ffi/mod.rs_
 
-- [ ] 23. Create FFI file operations in rust_core/src/ffi/file_ops.rs **[GitHub Issue #23](https://github.com/yhsung/mini-mind/issues/23)**
+- [x] 23. Create FFI file operations in rust_core/src/ffi/file_ops.rs **[GitHub Issue #23](https://github.com/yhsung/mini-mind/issues/23)**
   - File: rust_core/src/ffi/file_ops.rs
   - Implement save_mindmap and load_mindmap FFI functions
   - Add export_mindmap with format selection (PDF, SVG, PNG, OPML, Markdown)
