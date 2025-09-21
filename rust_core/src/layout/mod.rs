@@ -4,8 +4,10 @@
 //! positioning nodes in a mindmap for optimal visualization.
 
 pub mod radial;
+pub mod tree;
 
 pub use radial::*;
+pub use tree::*;
 
 use crate::graph::Graph;
 use crate::types::{ids::NodeId, Point, MindmapResult, MindmapError};
