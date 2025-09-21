@@ -5,9 +5,11 @@
 
 pub mod radial;
 pub mod tree;
+pub mod force;
 
 pub use radial::*;
 pub use tree::*;
+pub use force::*;
 
 use crate::graph::Graph;
 use crate::types::{ids::NodeId, Point, MindmapResult, MindmapError};
