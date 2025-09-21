@@ -40,10 +40,7 @@ pub mod search;
 
 // Data persistence and I/O
 #[cfg(feature = "sqlite")]
-pub mod persistence {
-    //! Database persistence layer
-    // Module placeholder - will be implemented in Tasks 15-17
-}
+pub mod persistence;
 
 pub mod io {
     //! File format import/export
