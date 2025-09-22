@@ -1,0 +1,246 @@
+name: mindmap_app
+description: Cross-platform mindmap application with Rust core engine and Flutter UI
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+  flutter: ">=3.13.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Flutter-Rust Bridge for FFI communication
+  flutter_rust_bridge: ^2.0.0
+
+  # State Management
+  provider: ^6.1.0
+  riverpod: ^2.4.0
+  flutter_riverpod: ^2.4.0
+
+  # UI Components and Theming
+  material_color_utilities: ^0.8.0
+  flutter_staggered_animations: ^1.1.1
+  animations: ^2.0.8
+
+  # File Operations and Persistence
+  path_provider: ^2.1.0
+  file_picker: ^6.1.0
+  share_plus: ^7.2.0
+  path: ^1.8.3
+
+  # Network and Web Support
+  url_launcher: ^6.2.0
+  http: ^1.1.0
+
+  # Image and Media Handling
+  image: ^4.1.0
+  flutter_svg: ^2.0.9
+  photo_view: ^0.14.0
+
+  # Platform Integration
+  device_info_plus: ^9.1.0
+  package_info_plus: ^4.2.0
+
+  # Utilities
+  uuid: ^4.1.0
+  intl: ^0.18.1
+  collection: ^1.18.0
+  meta: ^1.9.1
+
+  # JSON and Serialization
+  json_annotation: ^4.8.1
+
+  # Logging and Debugging
+  logger: ^2.0.2+1
+
+  # Cross-platform gesture handling
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code generation
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+
+  # Linting and Analysis
+  flutter_lints: ^3.0.0
+  very_good_analysis: ^5.1.0
+
+  # Testing utilities
+  mockito: ^5.4.2
+  integration_test:
+    sdk: flutter
+
+  # FFI code generation
+  ffigen: ^11.0.0
+
+# Flutter configuration
+flutter:
+  uses-material-design: true
+
+  # Application assets
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+    - assets/config/
+
+  # Custom fonts
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
+
+# Platform-specific configuration
+flutter_gen:
+  output: lib/generated/
+  line_length: 80
+
+# Flutter-Rust Bridge configuration
+flutter_rust_bridge:
+  rust_input: "../rust_core/src/ffi/mod.rs"
+  dart_output: "lib/bridge/generated/"
+  dart_format_line_length: 100
+  llvm_path:
+    - "C:\\Program Files\\LLVM"  # Windows
+    - "/opt/homebrew/opt/llvm"   # macOS (ARM)
+    - "/usr/local/opt/llvm"      # macOS (Intel)
+    - "/usr/lib/llvm-15"         # Linux
+
+# Build and deployment configuration
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          explicit_to_json: true
+          include_if_null: false
+
+# Platform channels and native integration
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.minimind.app
+        pluginClass: MindmapPlugin
+      ios:
+        pluginClass: MindmapPlugin
+      macos:
+        pluginClass: MindmapPlugin
+      windows:
+        pluginClass: MindmapPlugin
+      linux:
+        pluginClass: MindmapPlugin
+      web:
+        pluginClass: MindmapPluginWeb
+        fileName: mindmap_plugin_web.dart
+
+# Application metadata and configuration
+flutter:
+  # Generate splash screen
+  native_splash:
+    color: "#ffffff"
+    image: assets/images/splash_logo.png
+    color_dark: "#000000"
+    image_dark: assets/images/splash_logo_dark.png
+    android_12:
+      image: assets/images/splash_logo_android12.png
+      icon_background_color: "#ffffff"
+      color: "#ffffff"
+    web: false
+
+  # App icon configuration
+  icons:
+    android: "launcher_icon"
+    ios: true
+    image_path: "assets/icons/app_icon.png"
+    min_sdk_android: 21
+    remove_alpha_ios: true
+    background_color: "#ffffff"
+    theme_color: "#000000"
+
+# Analysis and linting configuration
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/generated/**"
+    - "lib/bridge/generated/**"
+
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # Enable additional lint rules for better code quality
+    - avoid_print
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - avoid_unnecessary_containers
+    - use_key_in_widget_constructors
+    - prefer_final_fields
+    - avoid_function_literals_in_foreach_calls
+    - prefer_is_empty
+    - prefer_is_not_empty
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - close_sinks
+    - comment_references
+    - control_flow_in_finally
+    - empty_statements
+    - hash_and_equals
+    - invariant_booleans
+    - iterable_contains_unrelated_type
+    - list_remove_unrelated_type
+    - literal_only_boolean_expressions
+    - no_adjacent_strings_in_list
+    - no_duplicate_case_values
+    - prefer_void_to_null
+    - test_types_in_equals
+    - throw_in_finally
+    - unnecessary_statements
+    - unrelated_type_equality_checks
+    - valid_regexps
+
+# Dependency overrides for compatibility
+dependency_overrides:
+  # Ensure compatibility between packages
+  collection: ^1.18.0
+  meta: ^1.9.1
+  material_color_utilities: ^0.8.0
+
+# Scripts and automation
+scripts:
+  # Custom build scripts
+  build:bridge: "flutter packages pub run build_runner build --delete-conflicting-outputs"
+  clean:bridge: "flutter packages pub run build_runner clean"
+  generate: "flutter packages pub run build_runner build"
+
+  # Testing scripts
+  test:unit: "flutter test"
+  test:integration: "flutter test integration_test/"
+  test:coverage: "flutter test --coverage"
+
+  # Analysis and formatting
+  analyze: "flutter analyze"
+  format: "dart format lib/ test/ integration_test/"
+  format:check: "dart format --set-exit-if-changed lib/ test/ integration_test/"
