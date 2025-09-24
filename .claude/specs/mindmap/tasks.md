@@ -237,7 +237,7 @@ L **Bad Examples (Too Broad)**:
   - Set app metadata and version information
   - _Requirements: REQ-MM-008_
 
-- [ ] 25. Create Flutter main.dart entry point **[GitHub Issue #25](https://github.com/yhsung/mini-mind/issues/25)**
+- [x] 25. Create Flutter main.dart entry point **[GitHub Issue #25](https://github.com/yhsung/mini-mind/issues/25)**
   - File: flutter_app/lib/main.dart
   - Set up main() function with runApp() and basic error handling
   - Initialize platform-specific configurations and services
