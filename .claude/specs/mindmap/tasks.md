@@ -244,14 +244,14 @@ L **Bad Examples (Too Broad)**:
   - Configure app-level settings and theme mode
   - _Requirements: REQ-MM-008_
 
-- [ ] 26. Create Flutter app.dart structure **[GitHub Issue #26](https://github.com/yhsung/mini-mind/issues/26)**
+- [x] 26. Create Flutter app.dart structure **[GitHub Issue #26](https://github.com/yhsung/mini-mind/issues/26)**
   - File: flutter_app/lib/app.dart
   - Implement MaterialApp with theme configuration and routing
   - Set up basic navigation structure and home page
   - Configure platform-adaptive design settings
   - _Requirements: REQ-MM-008_
 
-- [ ] 27. Set up Flutter-Rust bridge client in flutter_app/lib/bridge/ **[GitHub Issue #27](https://github.com/yhsung/mini-mind/issues/27)**
+- [x] 27. Set up Flutter-Rust bridge client in flutter_app/lib/bridge/ **[GitHub Issue #27](https://github.com/yhsung/mini-mind/issues/27)**
   - Files: flutter_app/lib/bridge/mindmap_bridge.dart, flutter_app/lib/bridge/bridge_types.dart
   - Generate Dart bindings from Rust FFI interface
   - Create type conversion utilities for Dart-Rust communication
