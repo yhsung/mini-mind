@@ -7,6 +7,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
+import '../models/node.dart';
+import '../models/edge.dart';
+import '../models/document.dart';
+
 part 'bridge_types.g.dart';
 
 /// FFI-compatible error types that match Rust BridgeError enum
@@ -97,33 +101,8 @@ class FfiPoint {
   final double x;
   final double y;
 
-  factory FfiPoint.fromJson(Map<String, dynamic> json) =>
-      _$FfiPointFromJson(json);
-
+  factory FfiPoint.fromJson(Map<String, dynamic> json) => _$FfiPointFromJson(json);
   Map<String, dynamic> toJson() => _$FfiPointToJson(this);
-
-  factory FfiPoint.zero() => const FfiPoint(x: 0.0, y: 0.0);
-
-  FfiPoint operator +(FfiPoint other) => FfiPoint(
-        x: x + other.x,
-        y: y + other.y,
-      );
-
-  FfiPoint operator -(FfiPoint other) => FfiPoint(
-        x: x - other.x,
-        y: y - other.y,
-      );
-
-  FfiPoint operator *(double scalar) => FfiPoint(
-        x: x * scalar,
-        y: y * scalar,
-      );
-
-  double distanceTo(FfiPoint other) {
-    final dx = x - other.x;
-    final dy = y - other.y;
-    return (dx * dx + dy * dy).sqrt();
-  }
 
   @override
   String toString() => 'FfiPoint($x, $y)';
@@ -137,6 +116,69 @@ class FfiPoint {
   int get hashCode => Object.hash(x, y);
 }
 
+/// FFI-compatible size structure
+@JsonSerializable()
+class FfiSize {
+  const FfiSize({
+    required this.width,
+    required this.height,
+  });
+
+  final double width;
+  final double height;
+
+  factory FfiSize.fromJson(Map<String, dynamic> json) => _$FfiSizeFromJson(json);
+  Map<String, dynamic> toJson() => _$FfiSizeToJson(this);
+
+  @override
+  String toString() => 'FfiSize($width, $height)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FfiSize && width == other.width && height == other.height;
+
+  @override
+  int get hashCode => Object.hash(width, height);
+}
+
+/// FFI-compatible rectangle structure
+@JsonSerializable()
+class FfiRect {
+  const FfiRect({
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
+  });
+
+  final double x;
+  final double y;
+  final double width;
+  final double height;
+
+  double get left => x;
+  double get top => y;
+  double get right => x + width;
+  double get bottom => y + height;
+  FfiPoint get center => FfiPoint(x + width / 2, y + height / 2);
+
+  factory FfiRect.fromJson(Map<String, dynamic> json) => _$FfiRectFromJson(json);
+  Map<String, dynamic> toJson() => _$FfiRectToJson(this);
+
+  @override
+  String toString() => 'FfiRect($x, $y, $width, $height)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FfiRect && x == other.x && y == other.y &&
+      width == other.width && height == other.height;
+
+  @override
+  int get hashCode => Object.hash(x, y, width, height);
+}
+
 /// FFI-compatible node data structure
 @JsonSerializable()
 class FfiNodeData {
@@ -144,455 +186,204 @@ class FfiNodeData {
     required this.id,
     required this.text,
     required this.position,
-    required this.tags,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.metadata,
+    required this.size,
     this.parentId,
+    this.metadata = const {},
   });
 
   final String id;
-  final String? parentId;
   final String text;
   final FfiPoint position;
-  final List<String> tags;
-  final int createdAt; // Unix timestamp
-  final int updatedAt; // Unix timestamp
+  final FfiSize size;
+  final String? parentId;
   final Map<String, String> metadata;
 
-  factory FfiNodeData.fromJson(Map<String, dynamic> json) =>
-      _$FfiNodeDataFromJson(json);
-
+  factory FfiNodeData.fromJson(Map<String, dynamic> json) => _$FfiNodeDataFromJson(json);
   Map<String, dynamic> toJson() => _$FfiNodeDataToJson(this);
 
-  /// Create a copy with updated fields
-  FfiNodeData copyWith({
-    String? id,
-    String? parentId,
-    String? text,
-    FfiPoint? position,
-    List<String>? tags,
-    int? createdAt,
-    int? updatedAt,
-    Map<String, String>? metadata,
-  }) {
-    return FfiNodeData(
-      id: id ?? this.id,
-      parentId: parentId ?? this.parentId,
-      text: text ?? this.text,
-      position: position ?? this.position,
-      tags: tags ?? this.tags,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      metadata: metadata ?? this.metadata,
-    );
-  }
-
-  /// Get creation date as DateTime
-  DateTime get createdDate => DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
-
-  /// Get updated date as DateTime
-  DateTime get updatedDate => DateTime.fromMillisecondsSinceEpoch(updatedAt * 1000);
-
   @override
-  String toString() => 'FfiNodeData(id: $id, text: "$text")';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is FfiNodeData && id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
+  String toString() => 'FfiNodeData($id: "$text")';
 }
 
-/// FFI-compatible layout result data structure
+/// FFI-compatible edge data structure
+@JsonSerializable()
+class FfiEdgeData {
+  const FfiEdgeData({
+    required this.id,
+    required this.sourceId,
+    required this.targetId,
+    this.label,
+    this.weight = 1.0,
+    this.metadata = const {},
+  });
+
+  final String id;
+  final String sourceId;
+  final String targetId;
+  final String? label;
+  final double weight;
+  final Map<String, String> metadata;
+
+  factory FfiEdgeData.fromJson(Map<String, dynamic> json) => _$FfiEdgeDataFromJson(json);
+  Map<String, dynamic> toJson() => _$FfiEdgeDataToJson(this);
+
+  @override
+  String toString() => 'FfiEdgeData($id: $sourceId -> $targetId)';
+}
+
+/// FFI-compatible layout result
 @JsonSerializable()
 class FfiLayoutResult {
   const FfiLayoutResult({
-    required this.nodePositions,
     required this.layoutType,
-    required this.computationTimeMs,
+    required this.nodes,
+    required this.computationTime,
   });
 
-  final Map<String, FfiPoint> nodePositions;
   final FfiLayoutType layoutType;
-  final int computationTimeMs;
+  final List<FfiNodeData> nodes;
+  final int computationTime; // Duration in milliseconds
 
-  factory FfiLayoutResult.fromJson(Map<String, dynamic> json) =>
-      _$FfiLayoutResultFromJson(json);
+  Duration get computationTimeDuration => Duration(milliseconds: computationTime);
 
+  factory FfiLayoutResult.fromJson(Map<String, dynamic> json) => _$FfiLayoutResultFromJson(json);
   Map<String, dynamic> toJson() => _$FfiLayoutResultToJson(this);
 
-  /// Get computation time as Duration
-  Duration get computationTime => Duration(milliseconds: computationTimeMs);
-
   @override
-  String toString() =>
-      'FfiLayoutResult(${layoutType.name}, ${nodePositions.length} nodes, ${computationTimeMs}ms)';
+  String toString() => 'FfiLayoutResult(${layoutType.name}: ${nodes.length} nodes, ${computationTime}ms)';
 }
 
-/// FFI-compatible search result data structure
+/// FFI-compatible search result
 @JsonSerializable()
 class FfiSearchResult {
   const FfiSearchResult({
     required this.nodeId,
     required this.text,
     required this.score,
-    required this.matchPositions,
+    this.snippet,
   });
 
   final String nodeId;
   final String text;
   final double score;
-  final List<MatchPosition> matchPositions;
+  final String? snippet;
 
-  factory FfiSearchResult.fromJson(Map<String, dynamic> json) =>
-      _$FfiSearchResultFromJson(json);
-
+  factory FfiSearchResult.fromJson(Map<String, dynamic> json) => _$FfiSearchResultFromJson(json);
   Map<String, dynamic> toJson() => _$FfiSearchResultToJson(this);
 
   @override
-  String toString() => 'FfiSearchResult(nodeId: $nodeId, score: $score)';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is FfiSearchResult && nodeId == other.nodeId;
-
-  @override
-  int get hashCode => nodeId.hashCode;
+  String toString() => 'FfiSearchResult($nodeId: $score)';
 }
 
-/// Match position for search results
-@JsonSerializable()
-class MatchPosition {
-  const MatchPosition({
-    required this.start,
-    required this.end,
-  });
-
-  final int start;
-  final int end;
-
-  factory MatchPosition.fromJson(Map<String, dynamic> json) =>
-      _$MatchPositionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MatchPositionToJson(this);
-
-  int get length => end - start;
-
-  @override
-  String toString() => 'MatchPosition($start, $end)';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MatchPosition && start == other.start && end == other.end;
-
-  @override
-  int get hashCode => Object.hash(start, end);
-}
-
-/// FFI-compatible mindmap data structure
-@JsonSerializable()
-class FfiMindmapData {
-  const FfiMindmapData({
-    required this.id,
-    required this.title,
-    required this.rootNodeId,
-    required this.nodes,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  final String id;
-  final String title;
-  final String rootNodeId;
-  final List<FfiNodeData> nodes;
-  final int createdAt; // Unix timestamp
-  final int updatedAt; // Unix timestamp
-
-  factory FfiMindmapData.fromJson(Map<String, dynamic> json) =>
-      _$FfiMindmapDataFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FfiMindmapDataToJson(this);
-
-  /// Get creation date as DateTime
-  DateTime get createdDate => DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
-
-  /// Get updated date as DateTime
-  DateTime get updatedDate => DateTime.fromMillisecondsSinceEpoch(updatedAt * 1000);
-
-  /// Get root node
-  FfiNodeData? get rootNode =>
-      nodes.cast<FfiNodeData?>().firstWhere(
-        (node) => node?.id == rootNodeId,
-        orElse: () => null,
-      );
-
-  /// Get children of a node
-  List<FfiNodeData> getChildren(String nodeId) =>
-      nodes.where((node) => node.parentId == nodeId).toList();
-
-  /// Get all descendants of a node
-  List<FfiNodeData> getDescendants(String nodeId) {
-    final descendants = <FfiNodeData>[];
-    final children = getChildren(nodeId);
-
-    for (final child in children) {
-      descendants.add(child);
-      descendants.addAll(getDescendants(child.id));
-    }
-
-    return descendants;
-  }
-
-  /// Get node by ID
-  FfiNodeData? getNodeById(String id) =>
-      nodes.cast<FfiNodeData?>().firstWhere(
-        (node) => node?.id == id,
-        orElse: () => null,
-      );
-
-  @override
-  String toString() => 'FfiMindmapData(id: $id, title: "$title", ${nodes.length} nodes)';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is FfiMindmapData && id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
-}
-
-/// FFI-compatible update data for nodes
-@JsonSerializable()
-class FfiNodeUpdate {
-  const FfiNodeUpdate({
-    this.text,
-    this.position,
-    this.tags,
-    this.metadata,
-  });
-
-  final String? text;
-  final FfiPoint? position;
-  final List<String>? tags;
-  final Map<String, String>? metadata;
-
-  factory FfiNodeUpdate.fromJson(Map<String, dynamic> json) =>
-      _$FfiNodeUpdateFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FfiNodeUpdateToJson(this);
-
-  /// Create update with only text change
-  factory FfiNodeUpdate.text(String text) => FfiNodeUpdate(text: text);
-
-  /// Create update with only position change
-  factory FfiNodeUpdate.position(FfiPoint position) =>
-      FfiNodeUpdate(position: position);
-
-  /// Create update with only tags change
-  factory FfiNodeUpdate.tags(List<String> tags) => FfiNodeUpdate(tags: tags);
-
-  /// Create update with only metadata change
-  factory FfiNodeUpdate.metadata(Map<String, String> metadata) =>
-      FfiNodeUpdate(metadata: metadata);
-
-  /// Check if update has any changes
-  bool get hasChanges => text != null || position != null || tags != null || metadata != null;
-
-  @override
-  String toString() => 'FfiNodeUpdate(${_describeChanges()})';
-
-  String _describeChanges() {
-    final changes = <String>[];
-    if (text != null) changes.add('text');
-    if (position != null) changes.add('position');
-    if (tags != null) changes.add('tags');
-    if (metadata != null) changes.add('metadata');
-    return changes.join(', ');
+/// Extension methods for converting between Dart models and FFI types
+extension NodeToFfi on Node {
+  /// Convert Dart Node to FFI NodeData
+  FfiNodeData toFfi() {
+    return FfiNodeData(
+      id: id,
+      text: text,
+      position: FfiPoint(x: position.x, y: position.y),
+      size: FfiSize(width: size.width, height: size.height),
+      parentId: parentId,
+      metadata: metadata,
+    );
   }
 }
 
-/// File format enumeration for import/export operations
-enum FileFormat {
-  json,
-  opml,
-  markdown,
-  text,
-}
-
-/// File save/load options
-@JsonSerializable()
-class FileOperationOptions {
-  const FileOperationOptions({
-    this.format,
-    this.preserveIds = false,
-    this.includeMetadata = true,
-    this.includeTimestamps = true,
-    this.maxDepth,
-    this.includeEmptyNodes = false,
-    this.createBackup = false,
-  });
-
-  final FileFormat? format;
-  final bool preserveIds;
-  final bool includeMetadata;
-  final bool includeTimestamps;
-  final int? maxDepth;
-  final bool includeEmptyNodes;
-  final bool createBackup;
-
-  factory FileOperationOptions.fromJson(Map<String, dynamic> json) =>
-      _$FileOperationOptionsFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FileOperationOptionsToJson(this);
-
-  /// Create default options for save operations
-  factory FileOperationOptions.defaultSave() => const FileOperationOptions(
-        includeMetadata: true,
-        includeTimestamps: true,
-        createBackup: true,
-      );
-
-  /// Create default options for load operations
-  factory FileOperationOptions.defaultLoad() => const FileOperationOptions(
-        preserveIds: false,
-        includeMetadata: true,
-        includeTimestamps: true,
-      );
-
-  @override
-  String toString() => 'FileOperationOptions(format: $format, backup: $createBackup)';
-}
-
-/// Result of file operations
-@JsonSerializable()
-class FileOperationResult {
-  const FileOperationResult({
-    required this.filePath,
-    required this.format,
-    required this.fileSize,
-    required this.nodeCount,
-    required this.operationTimeMs,
-    this.warnings = const [],
-    this.backupCreated = false,
-  });
-
-  final String filePath;
-  final FileFormat format;
-  final int fileSize;
-  final int nodeCount;
-  final int operationTimeMs;
-  final List<String> warnings;
-  final bool backupCreated;
-
-  factory FileOperationResult.fromJson(Map<String, dynamic> json) =>
-      _$FileOperationResultFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FileOperationResultToJson(this);
-
-  /// Get operation time as Duration
-  Duration get operationTime => Duration(milliseconds: operationTimeMs);
-
-  /// Get file size in a human-readable format
-  String get fileSizeFormatted {
-    if (fileSize < 1024) return '${fileSize}B';
-    if (fileSize < 1024 * 1024) return '${(fileSize / 1024).toStringAsFixed(1)}KB';
-    return '${(fileSize / (1024 * 1024)).toStringAsFixed(1)}MB';
-  }
-
-  @override
-  String toString() =>
-      'FileOperationResult($filePath, $nodeCount nodes, $fileSizeFormatted)';
-}
-
-/// Extension methods for working with FFI types
-extension FfiPointExtensions on FfiPoint {
-  /// Convert to Dart ui.Offset for Flutter widgets
-  // Offset toOffset() => Offset(x, y);
-
-  /// Create from Dart ui.Offset
-  // static FfiPoint fromOffset(Offset offset) => FfiPoint(x: offset.dx, y: offset.dy);
-}
-
-extension FfiLayoutTypeExtensions on FfiLayoutType {
-  /// Get display name for the layout type
-  String get displayName {
-    switch (this) {
-      case FfiLayoutType.radial:
-        return 'Radial';
-      case FfiLayoutType.tree:
-        return 'Tree';
-      case FfiLayoutType.forceDirected:
-        return 'Force Directed';
-    }
-  }
-
-  /// Get description for the layout type
-  String get description {
-    switch (this) {
-      case FfiLayoutType.radial:
-        return 'Nodes arranged in concentric circles around the root';
-      case FfiLayoutType.tree:
-        return 'Hierarchical tree structure with clear parent-child relationships';
-      case FfiLayoutType.forceDirected:
-        return 'Physics-based layout with natural node positioning';
-    }
-  }
-
-  /// Get icon for the layout type
-  String get iconName {
-    switch (this) {
-      case FfiLayoutType.radial:
-        return 'radio_button_unchecked';
-      case FfiLayoutType.tree:
-        return 'account_tree';
-      case FfiLayoutType.forceDirected:
-        return 'scatter_plot';
-    }
+extension EdgeToFfi on Edge {
+  /// Convert Dart Edge to FFI EdgeData
+  FfiEdgeData toFfi() {
+    return FfiEdgeData(
+      id: id,
+      sourceId: sourceId,
+      targetId: targetId,
+      label: label,
+      weight: weight,
+      metadata: metadata,
+    );
   }
 }
 
-extension ExportFormatExtensions on ExportFormat {
-  /// Get file extension for the format
-  String get fileExtension {
-    switch (this) {
-      case ExportFormat.pdf:
-        return '.pdf';
-      case ExportFormat.svg:
-        return '.svg';
-      case ExportFormat.png:
-        return '.png';
-      case ExportFormat.opml:
-        return '.opml';
-      case ExportFormat.markdown:
-        return '.md';
-    }
+extension FfiNodeToModel on FfiNodeData {
+  /// Convert FFI NodeData to Dart Node
+  Node toModel() {
+    final now = DateTime.now();
+    return Node(
+      id: id,
+      text: text,
+      position: Point(position.x, position.y),
+      size: Size(size.width, size.height),
+      parentId: parentId,
+      metadata: metadata,
+      createdAt: now,
+      updatedAt: now,
+    );
   }
+}
 
-  /// Get display name for the format
-  String get displayName {
-    switch (this) {
-      case ExportFormat.pdf:
-        return 'PDF Document';
-      case ExportFormat.svg:
-        return 'SVG Vector';
-      case ExportFormat.png:
-        return 'PNG Image';
-      case ExportFormat.opml:
-        return 'OPML Outline';
-      case ExportFormat.markdown:
-        return 'Markdown';
-    }
+extension FfiEdgeToModel on FfiEdgeData {
+  /// Convert FFI EdgeData to Dart Edge
+  Edge toModel() {
+    final now = DateTime.now();
+    return Edge(
+      id: id,
+      sourceId: sourceId,
+      targetId: targetId,
+      label: label,
+      weight: weight,
+      metadata: metadata,
+      createdAt: now,
+      updatedAt: now,
+    );
   }
+}
 
-  /// Check if format supports vector graphics
-  bool get isVector => this == ExportFormat.svg;
+extension FfiPointToModel on FfiPoint {
+  /// Convert FFI Point to Dart Point
+  Point toModel() {
+    return Point(x, y);
+  }
+}
 
-  /// Check if format is an image
-  bool get isImage => this == ExportFormat.png || this == ExportFormat.svg;
+extension PointToFfi on Point {
+  /// Convert Dart Point to FFI Point
+  FfiPoint toFfi() {
+    return FfiPoint(x: x, y: y);
+  }
+}
+
+extension FfiSizeToModel on FfiSize {
+  /// Convert FFI Size to Dart Size
+  Size toModel() {
+    return Size(width, height);
+  }
+}
+
+extension SizeToFfi on Size {
+  /// Convert Dart Size to FFI Size
+  FfiSize toFfi() {
+    return FfiSize(width: width, height: height);
+  }
+}
+
+extension FfiLayoutResultToModel on FfiLayoutResult {
+  /// Convert FFI LayoutResult to Dart models
+  List<Node> toNodeModels() {
+    return nodes.map((ffiNode) => ffiNode.toModel()).toList();
+  }
+}
+
+extension DocumentToFfi on Document {
+  /// Convert Document to FFI-compatible data
+  Map<String, dynamic> toFfiData() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'nodes': nodes.map((node) => node.toFfi().toJson()).toList(),
+      'edges': edges.map((edge) => edge.toFfi().toJson()).toList(),
+      'rootNodeId': rootNodeId,
+      'metadata': metadata,
+    };
+  }
 }
