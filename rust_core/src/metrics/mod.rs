@@ -16,6 +16,7 @@ pub mod counter;
 pub mod memory;
 pub mod aggregator;
 pub mod reporter;
+pub mod performance;
 
 // Re-exports
 pub use timer::*;
@@ -23,6 +24,7 @@ pub use counter::*;
 pub use memory::*;
 pub use aggregator::*;
 pub use reporter::*;
+pub use performance::*;
 
 /// Global metrics registry instance
 static METRICS_REGISTRY: std::sync::OnceLock<MetricsRegistry> = std::sync::OnceLock::new();
