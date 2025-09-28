@@ -22,6 +22,7 @@ import 'services/platform_service.dart';
 import 'services/logging_service.dart';
 import 'services/error_service.dart';
 import 'utils/platform_utils.dart';
+import 'utils/error_handler.dart';
 
 /// Global logger instance for application-wide logging
 final Logger logger = Logger(
@@ -68,49 +69,15 @@ Future<void> main() async {
 
 /// Sets up comprehensive error handling for the application
 Future<void> _setupErrorHandling() async {
-  // Handle Flutter framework errors
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    logger.e(
-      'Flutter Error: ${details.exception}',
-      error: details.exception,
-      stackTrace: details.stack,
-    );
+  // Initialize the global error handler with full features
+  await GlobalErrorHandler.instance.initialize(
+    enableUserFeedback: true,
+    enableCrashReporting: true,
+    maxCrashReports: 100,
+    crashReportRetention: const Duration(days: 30),
+  );
 
-    // Report to error tracking service in production
-    if (kReleaseMode) {
-      ErrorService.instance.reportError(
-        details.exception,
-        details.stack,
-        fatal: true,
-      );
-    }
-  };
-
-  // Handle platform errors (outside of Flutter)
-  PlatformDispatcher.instance.onError = (error, stack) {
-    logger.e(
-      'Platform Error: $error',
-      error: error,
-      stackTrace: stack,
-    );
-
-    // Report to error tracking service in production
-    if (kReleaseMode) {
-      ErrorService.instance.reportError(
-        error,
-        stack,
-        fatal: true,
-      );
-    }
-
-    return true; // Indicate the error was handled
-  };
-
-  // Initialize error tracking service
-  await ErrorService.instance.initialize();
-
-  logger.i('Error handling initialized successfully');
+  logger.i('Global error handling initialized successfully');
 }
 
 /// Initializes platform-specific configurations
@@ -140,7 +107,7 @@ Future<void> _initializePlatformConfiguration() async {
 
     logger.i('Platform configuration initialized for ${PlatformUtils.platformName}');
   } catch (e, stackTrace) {
-    logger.e('Failed to initialize platform configuration', error: e, stackTrace: stackTrace);
+    await GlobalErrorHandler.instance.handleError(e, stackTrace);
     rethrow;
   }
 }
@@ -207,7 +174,7 @@ Future<void> _initializeCoreServices() async {
 
     logger.i('Core services initialized successfully');
   } catch (e, stackTrace) {
-    logger.e('Failed to initialize core services', error: e, stackTrace: stackTrace);
+    await GlobalErrorHandler.instance.handleError(e, stackTrace);
     rethrow;
   }
 }
@@ -236,7 +203,7 @@ Future<void> _configureAppSettings() async {
       developer.Timeline.finishSync();
     }
   } catch (e, stackTrace) {
-    logger.e('Failed to configure app settings', error: e, stackTrace: stackTrace);
+    await GlobalErrorHandler.instance.handleError(e, stackTrace);
     rethrow;
   }
 }
@@ -284,14 +251,24 @@ class _ProviderLogger extends ProviderObserver {
       error: error,
       stackTrace: stackTrace,
     );
+
+    // Handle provider errors through global error handler
+    GlobalErrorHandler.instance.handleError(
+      error,
+      stackTrace,
+      additionalContext: {
+        'provider_name': provider.name ?? provider.runtimeType.toString(),
+        'error_source': 'provider_failure',
+      },
+    );
   }
 }
 
 /// Global exception handler for uncaught exceptions
 ///
 /// This function is called when an exception occurs that wasn't
-/// caught by the application code. It logs the error and shows
-/// a user-friendly error message.
+/// caught by the application code. It uses the global error handler
+/// for comprehensive error processing.
 void handleGlobalException(Object error, StackTrace stackTrace) {
   logger.e(
     'Uncaught exception in application',
@@ -299,16 +276,15 @@ void handleGlobalException(Object error, StackTrace stackTrace) {
     stackTrace: stackTrace,
   );
 
-  // Report error to tracking service in production
-  if (kReleaseMode) {
-    ErrorService.instance.reportError(error, stackTrace, fatal: false);
-  }
-
-  // Show user-friendly error message
-  if (!kIsWeb) {
-    // For native platforms, we could show a native dialog
-    // This would require additional platform-specific implementation
-  }
+  // Handle through global error handler
+  GlobalErrorHandler.instance.handleError(
+    error,
+    stackTrace,
+    additionalContext: {
+      'error_source': 'uncaught_exception',
+      'is_global_handler': true,
+    },
+  );
 }
 
 /// Application lifecycle callback handler
