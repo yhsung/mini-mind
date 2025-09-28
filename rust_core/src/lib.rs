@@ -50,10 +50,7 @@ pub mod ffi;
 
 // Performance monitoring
 #[cfg(feature = "metrics")]
-pub mod metrics {
-    //! Performance metrics and monitoring
-    // Module placeholder - will be implemented in Tasks 47-48
-}
+pub mod metrics;
 
 // Public API exports for FFI interface
 #[cfg(feature = "flutter_rust_bridge_feature")]

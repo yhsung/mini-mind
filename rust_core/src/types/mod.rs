@@ -52,6 +52,9 @@ pub enum MindmapError {
     #[error("IO error: {message}")]
     IoError { message: String },
 
+    #[error("Metrics error: {0}")]
+    MetricsError(String),
+
     #[error("Parse error: {message}")]
     ParseError { message: String },
 
