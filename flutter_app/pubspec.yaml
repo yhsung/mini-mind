@@ -45,7 +45,7 @@ dependencies:
 
   # Utilities
   uuid: ^4.1.0
-  intl: ^0.18.1
+  intl: ^0.20.2
   collection: ^1.18.0
   meta: ^1.9.1
 
@@ -90,23 +90,8 @@ flutter:
     - assets/fonts/
     - assets/config/
 
-  # Custom fonts
-  fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-        - asset: assets/fonts/Inter-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700
+  # Custom fonts (will be added when font files are available)
 
-    - family: JetBrainsMono
-      fonts:
-        - asset: assets/fonts/JetBrainsMono-Regular.ttf
-        - asset: assets/fonts/JetBrainsMono-Bold.ttf
-          weight: 700
 
 # Platform-specific configuration
 flutter_gen:
@@ -132,49 +117,6 @@ targets:
         options:
           explicit_to_json: true
           include_if_null: false
-
-# Platform channels and native integration
-flutter:
-  plugin:
-    platforms:
-      android:
-        package: com.minimind.app
-        pluginClass: MindmapPlugin
-      ios:
-        pluginClass: MindmapPlugin
-      macos:
-        pluginClass: MindmapPlugin
-      windows:
-        pluginClass: MindmapPlugin
-      linux:
-        pluginClass: MindmapPlugin
-      web:
-        pluginClass: MindmapPluginWeb
-        fileName: mindmap_plugin_web.dart
-
-# Application metadata and configuration
-flutter:
-  # Generate splash screen
-  native_splash:
-    color: "#ffffff"
-    image: assets/images/splash_logo.png
-    color_dark: "#000000"
-    image_dark: assets/images/splash_logo_dark.png
-    android_12:
-      image: assets/images/splash_logo_android12.png
-      icon_background_color: "#ffffff"
-      color: "#ffffff"
-    web: false
-
-  # App icon configuration
-  icons:
-    android: "launcher_icon"
-    ios: true
-    image_path: "assets/icons/app_icon.png"
-    min_sdk_android: 21
-    remove_alpha_ios: true
-    background_color: "#ffffff"
-    theme_color: "#000000"
 
 # Analysis and linting configuration
 analyzer:

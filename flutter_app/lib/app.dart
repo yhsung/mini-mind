@@ -282,8 +282,8 @@ class MindmapApp extends ConsumerWidget {
   }
 
   /// Build card theme
-  CardTheme _buildCardTheme(ColorScheme colorScheme, Brightness brightness) {
-    return CardTheme(
+  CardThemeData _buildCardTheme(ColorScheme colorScheme, Brightness brightness) {
+    return CardThemeData(
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -293,8 +293,8 @@ class MindmapApp extends ConsumerWidget {
   }
 
   /// Build dialog theme
-  DialogTheme _buildDialogTheme(ColorScheme colorScheme) {
-    return DialogTheme(
+  DialogThemeData _buildDialogTheme(ColorScheme colorScheme) {
+    return DialogThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
