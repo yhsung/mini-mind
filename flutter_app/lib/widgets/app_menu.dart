@@ -230,9 +230,9 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
               enabled: mindmapState.hasMindmap,
             ),
             AppMenuItem(
-              title: 'Export as JSON...',
+              title: 'Export as OPML...',
               onPressed: mindmapState.hasMindmap
-                  ? () => _handleExport(context, ExportFormat.json)
+                  ? () => _handleExport(context, ExportFormat.opml)
                   : null,
               enabled: mindmapState.hasMindmap,
             ),

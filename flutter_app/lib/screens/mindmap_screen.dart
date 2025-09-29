@@ -20,6 +20,7 @@ import '../services/file_service.dart';
 import '../utils/platform_utils.dart';
 import '../utils/error_handler.dart';
 import '../bridge/bridge_types.dart';
+import 'settings_screen.dart';
 
 /// Main mindmap screen with canvas, toolbars, and controls
 class MindmapScreen extends ConsumerStatefulWidget {
@@ -657,19 +658,40 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
   }
 
   void _showAppMenu(BuildContext context) {
-    // TODO: Show app menu - implement based on AppMenu widget structure
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('App menu will be implemented'),
-      ),
-    );
+    // App menu is now integrated via AppMenuBar wrapper
+    // This method can be used for mobile context menu if needed
+    if (PlatformUtils.isMobile) {
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (context) => Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Settings'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showSettings(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('About'),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   void _showSettings(BuildContext context) {
-    // TODO: Implement settings dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Settings dialog will be implemented'),
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => const SettingsScreen(),
       ),
     );
   }

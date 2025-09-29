@@ -1025,22 +1025,77 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     }
   }
 
-  void _showColorPicker(String title, Color currentColor, Function(Color) onChanged) {
-    // Simple color picker - in a real app, you might use a more sophisticated picker
+  void _showColorPicker(String title, Color currentColor, void Function(Color) onChanged) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: const Text('Color picker not implemented yet'),
+        content: SizedBox(
+          width: 300,
+          height: 200,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6,
+              childAspectRatio: 1,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: _predefinedColors.length,
+            itemBuilder: (context, index) {
+              final color = _predefinedColors[index];
+              final isSelected = color.value == currentColor.value;
+              return GestureDetector(
+                onTap: () {
+                  onChanged(color);
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected ? Colors.white : Colors.grey,
+                      width: isSelected ? 3 : 1,
+                    ),
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check, color: Colors.white)
+                      : null,
+                ),
+              );
+            },
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text('Cancel'),
           ),
         ],
       ),
     );
   }
+
+  static const List<Color> _predefinedColors = [
+    Colors.blue,
+    Colors.red,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+    Colors.teal,
+    Colors.indigo,
+    Colors.pink,
+    Colors.amber,
+    Colors.cyan,
+    Colors.lime,
+    Colors.brown,
+    Colors.blueGrey,
+    Colors.deepOrange,
+    Colors.deepPurple,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.yellow,
+  ];
 
   Future<void> _exportData() async {
     try {
