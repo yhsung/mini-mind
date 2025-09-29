@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/app_config.dart';
 import '../utils/platform_utils.dart';
 import 'mindmap_screen.dart';
+import 'settings_screen.dart';
 
 /// Welcome screen with create/open options
 class WelcomeScreen extends ConsumerWidget {
@@ -163,17 +164,9 @@ class WelcomeScreen extends ConsumerWidget {
   }
 
   void _showSettings(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Settings'),
-        content: const Text('Settings will integrate with AppConfig system'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => const SettingsScreen(),
       ),
     );
   }

@@ -11,6 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/app_config.dart';
 import '../widgets/mindmap_canvas.dart';
+import '../widgets/layout_controls.dart';
+import '../widgets/search_widget.dart';
 import '../state/mindmap_state.dart';
 import '../state/app_state.dart';
 import '../state/providers.dart';
@@ -308,7 +310,7 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
               ),
             ],
           ),
-          child: const Placeholder(), // TODO: Replace with LayoutControls widget
+          child: const MindmapLayoutControls()
         ),
       ),
     );
@@ -328,7 +330,10 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
             ),
           ),
         ),
-        child: const Placeholder(), // TODO: Replace with SearchWidget
+        child: MindmapSearchWidget(
+          onSearchClosed: () => setState(() => _showSearch = false),
+          onSearchResult: _onSearchResult,
+        )
       ),
     );
   }
@@ -493,11 +498,14 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
     notifier.updateNodePosition(node.id as String, ffiPosition);
   }
 
-  void _onSearchResult(dynamic searchResult) {
-    // Handle search result selection
-    final notifier = ref.read(mindmapStateProvider.notifier);
-    if (searchResult.nodeId != null) {
-      notifier.selectNode(searchResult.nodeId as String);
+  void _onSearchResult(List<dynamic> searchResults) {
+    // Handle search result selection - for now just select the first result
+    if (searchResults.isNotEmpty) {
+      final notifier = ref.read(mindmapStateProvider.notifier);
+      final firstResult = searchResults.first;
+      if (firstResult.node?.id != null) {
+        notifier.selectNode(firstResult.node.id as String);
+      }
     }
   }
 
