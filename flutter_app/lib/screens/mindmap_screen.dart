@@ -13,6 +13,7 @@ import '../config/app_config.dart';
 import '../widgets/mindmap_canvas.dart';
 import '../widgets/layout_controls.dart';
 import '../widgets/search_widget.dart';
+import '../widgets/basic_app_menu.dart';
 import '../state/mindmap_state.dart';
 import '../state/app_state.dart';
 import '../state/providers.dart';
@@ -107,9 +108,10 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
     final appState = ref.watch(appStateProvider);
     final config = AppConfig.instance.config;
 
-    return FadeTransition(
-      opacity: _fadeController,
-      child: Scaffold(
+    return BasicAppMenuBar(
+      child: FadeTransition(
+        opacity: _fadeController,
+        child: Scaffold(
         backgroundColor: config.theme.themeMode == ThemeMode.dark
             ? Colors.grey[900]
             : Colors.grey[50],
@@ -139,7 +141,8 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
             if (mindmapState.isLoading) _buildLoadingOverlay(context),
           ],
         ),
-        floatingActionButton: _buildFloatingActionButton(context, config),
+          floatingActionButton: _buildFloatingActionButton(context, config),
+        ),
       ),
     );
   }
