@@ -18,6 +18,7 @@ import '../state/mindmap_state.dart';
 import '../state/app_state.dart';
 import '../state/providers.dart';
 import '../services/file_service.dart';
+import '../services/fullscreen_service.dart';
 import '../utils/platform_utils.dart';
 import '../utils/error_handler.dart';
 import '../bridge/bridge_types.dart';
@@ -70,6 +71,9 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
     // Initialize with fade in
     _fadeController.forward();
 
+    // Setup fullscreen service
+    _setupFullscreenService();
+
     // Load initial file if provided
     if (widget.initialFile != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -88,6 +92,11 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
     WidgetsBinding.instance.removeObserver(this);
     _fadeController.dispose();
     _slideController.dispose();
+
+    // Cleanup fullscreen service
+    final fullscreenController = ref.read(fullscreenControllerProvider);
+    fullscreenController.unregisterCallback();
+
     super.dispose();
   }
 
@@ -658,6 +667,10 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       _slideController.forward();
     }
+
+    // Update fullscreen service state
+    final fullscreenController = ref.read(fullscreenControllerProvider);
+    fullscreenController.updateState(_isFullscreen);
   }
 
   void _showAppMenu(BuildContext context) {
@@ -697,5 +710,10 @@ class _MindmapScreenState extends ConsumerState<MindmapScreen>
         builder: (context) => const SettingsScreen(),
       ),
     );
+  }
+
+  void _setupFullscreenService() {
+    final fullscreenController = ref.read(fullscreenControllerProvider);
+    fullscreenController.registerToggleCallback(_toggleFullscreen);
   }
 }

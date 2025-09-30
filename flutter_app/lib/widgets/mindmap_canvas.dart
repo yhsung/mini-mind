@@ -5,6 +5,7 @@
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:vector_math/vector_math_64.dart' as vector_math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import '../models/document.dart';
 import '../models/node.dart';
 import '../models/edge.dart';
 import '../state/providers.dart';
+import '../services/canvas_service.dart';
 
 /// The main mindmap canvas widget with zoom, pan, and rendering capabilities
 class MindmapCanvas extends ConsumerStatefulWidget {
@@ -78,10 +80,12 @@ class _MindmapCanvasState extends ConsumerState<MindmapCanvas>
     );
     _setupZoomAnimation();
     _setupTransformationListener();
+    _setupCanvasServiceCallbacks();
   }
 
   @override
   void dispose() {
+    _unregisterCanvasServiceCallbacks();
     _transformationController.dispose();
     _zoomAnimationController.dispose();
     super.dispose();
@@ -116,15 +120,65 @@ class _MindmapCanvasState extends ConsumerState<MindmapCanvas>
             }
           });
         }
+
+        // Report zoom level to canvas service
+        final canvasController = ref.read(canvasControllerProvider);
+        canvasController.reportZoomLevel(_currentZoom);
       }
     });
+  }
+
+  void _setupCanvasServiceCallbacks() {
+    if (mounted) {
+      final canvasController = ref.read(canvasControllerProvider);
+      canvasController.registerCallbacks(
+        onZoomIn: _handleZoomIn,
+        onZoomOut: _handleZoomOut,
+        onZoomToFit: _handleZoomToFit,
+        onSetZoom: _handleSetZoom,
+      );
+    }
+  }
+
+  void _unregisterCanvasServiceCallbacks() {
+    if (mounted) {
+      final canvasController = ref.read(canvasControllerProvider);
+      canvasController.unregisterCallbacks();
+    }
+  }
+
+  void _handleZoomIn() {
+    final newZoom = (_currentZoom * 1.2).clamp(widget.minZoom, widget.maxZoom);
+    final center = context.size != null
+        ? Offset(context.size!.width / 2, context.size!.height / 2)
+        : Offset.zero;
+    zoomToPoint(center, newZoom);
+  }
+
+  void _handleZoomOut() {
+    final newZoom = (_currentZoom * 0.8).clamp(widget.minZoom, widget.maxZoom);
+    final center = context.size != null
+        ? Offset(context.size!.width / 2, context.size!.height / 2)
+        : Offset.zero;
+    zoomToPoint(center, newZoom);
+  }
+
+  void _handleZoomToFit() {
+    zoomToFit();
+  }
+
+  void _handleSetZoom(double zoom) {
+    final center = context.size != null
+        ? Offset(context.size!.width / 2, context.size!.height / 2)
+        : Offset.zero;
+    zoomToPoint(center, zoom);
   }
 
   /// Convert screen coordinates to canvas coordinates
   Offset _screenToCanvas(Offset screenPosition) {
     final Matrix4 transform = _transformationController.value;
     final Matrix4 inverse = Matrix4.inverted(transform);
-    final Vector3 canvasPosition = inverse.transform3(Vector3(
+    final vector_math.Vector3 canvasPosition = inverse.transform3(vector_math.Vector3(
       screenPosition.dx,
       screenPosition.dy,
       0.0,
@@ -135,7 +189,7 @@ class _MindmapCanvasState extends ConsumerState<MindmapCanvas>
   /// Convert canvas coordinates to screen coordinates
   Offset _canvasToScreen(Offset canvasPosition) {
     final Matrix4 transform = _transformationController.value;
-    final Vector3 screenPosition = transform.transform3(Vector3(
+    final vector_math.Vector3 screenPosition = transform.transform3(vector_math.Vector3(
       canvasPosition.dx,
       canvasPosition.dy,
       0.0,
