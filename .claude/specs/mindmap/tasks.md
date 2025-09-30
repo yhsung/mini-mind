@@ -333,21 +333,44 @@ L **Bad Examples (Too Broad)**:
   - Create cross-platform file path and permission handling
   - _Requirements: REQ-MM-005, REQ-MM-008_
 
-- [ ] 37. Implement keyboard shortcuts in flutter_app/lib/services/keyboard_service.dart **[GitHub Issue #37](https://github.com/yhsung/mini-mind/issues/37)**
+- [x] 37. Implement keyboard shortcuts in flutter_app/lib/services/keyboard_service.dart **[GitHub Issue #37](https://github.com/yhsung/mini-mind/issues/37)**
   - File: flutter_app/lib/services/keyboard_service.dart
   - Create platform-adaptive keyboard shortcut registration
   - Implement shortcuts for node creation (Enter, Tab), navigation, and editing
   - Add undo/redo keyboard support with state management integration
   - _Requirements: REQ-MM-001, REQ-MM-008_
   - _Leverage: flutter_app/lib/state/mindmap_state.dart_
+  - **✅ COMPLETED**: Comprehensive keyboard shortcuts implemented in BasicAppMenuBar with SingleActivator for cross-platform support (File: Cmd/Ctrl+N,O,S,Shift+S | Edit: Cmd/Ctrl+Z,Y,X,C,V | View: Cmd/Ctrl+=,-,0,F11)
 
-- [ ] 38. Add application menu in flutter_app/lib/widgets/app_menu.dart **[GitHub Issue #38](https://github.com/yhsung/mini-mind/issues/38)**
+- [x] 38. Add application menu in flutter_app/lib/widgets/app_menu.dart **[GitHub Issue #38](https://github.com/yhsung/mini-mind/issues/38)**
   - File: flutter_app/lib/widgets/app_menu.dart
   - Create platform-native menu bar for desktop platforms
   - Implement File, Edit, View, Layout menu structure
   - Add menu item actions connected to application state
   - _Requirements: REQ-MM-005, REQ-MM-008_
   - _Leverage: flutter_app/lib/services/file_service.dart_
+  - **✅ COMPLETED**: Enhanced BasicAppMenuBar with complete File/Edit/View menu structure, service integration (canvas/fullscreen), comprehensive keyboard shortcuts, and full CRUD operations for mindmap documents
+
+- [x] 38a. Create canvas service for zoom/pan operations in flutter_app/lib/services/canvas_service.dart **[Added during Phase 7]**
+  - File: flutter_app/lib/services/canvas_service.dart
+  - Implement CanvasController with callback registration pattern
+  - Add zoom operations (in/out/fit/set) with state management
+  - Create provider integration for Riverpod state management
+  - **✅ COMPLETED**: CanvasController service with zoom controls, callback registration, and integration with MindmapCanvas widget
+
+- [x] 38b. Create fullscreen service for application state in flutter_app/lib/services/fullscreen_service.dart **[Added during Phase 7]**
+  - File: flutter_app/lib/services/fullscreen_service.dart
+  - Implement FullscreenController with toggle functionality
+  - Add callback registration for loose coupling with UI components
+  - Create provider integration for state synchronization
+  - **✅ COMPLETED**: FullscreenController service with callback pattern and integration with MindmapScreen widget
+
+- [x] 38c. Create clipboard service for node operations in flutter_app/lib/services/clipboard_service.dart **[Added during Phase 7]**
+  - File: flutter_app/lib/services/clipboard_service.dart
+  - Implement cut/copy/paste operations for mindmap nodes
+  - Add cross-platform clipboard integration with JSON serialization
+  - Create node ID generation and conflict prevention
+  - **✅ COMPLETED**: ClipboardService with full node hierarchy support, cross-platform clipboard integration, and state management
 
 ### Phase 8: Testing and Quality Assurance
 
