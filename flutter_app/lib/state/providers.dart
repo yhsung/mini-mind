@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bridge/mindmap_bridge.dart';
+import '../bridge/bridge_types.dart';
 import 'app_state.dart';
 import 'mindmap_state.dart';
 
@@ -208,7 +209,7 @@ final currentLayoutTypeProvider = Provider<FfiLayoutType?>((ref) {
 /// Provider for layout computation time
 final layoutComputationTimeProvider = Provider<Duration?>((ref) {
   final result = ref.watch(layoutResultProvider);
-  return result?.computationTime;
+  return result?.computationTimeDuration;
 });
 
 /// Provider for checking if layout is available

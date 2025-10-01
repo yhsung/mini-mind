@@ -15,11 +15,13 @@ class ClipboardData {
     required this.nodes,
     required this.operation,
     required this.timestamp,
+    this.text,
   });
 
   final List<FfiNodeData> nodes;
   final ClipboardOperation operation;
   final DateTime timestamp;
+  final String? text;
 
   Map<String, dynamic> toJson() => {
     'nodes': nodes.map((node) => {
@@ -149,7 +151,12 @@ class ClipboardService {
   /// Clear clipboard
   Future<void> clearClipboard() async {
     try {
-      await Clipboard.setData(const ClipboardData(text: ''));
+      await Clipboard.setData(ClipboardData(
+        nodes: const [],
+        operation: ClipboardOperation.cut,
+        timestamp: DateTime.now(),
+        text: '',
+      ));
       _internalClipboard = null;
       _logger.d('Clipboard cleared');
     } catch (e) {
@@ -161,7 +168,12 @@ class ClipboardService {
   Future<void> _setClipboardData(ClipboardData data) async {
     try {
       final jsonString = jsonEncode(data.toJson());
-      await Clipboard.setData(ClipboardData(text: jsonString));
+      await Clipboard.setData(ClipboardData(
+        nodes: data.nodes,
+        operation: data.operation,
+        timestamp: data.timestamp,
+        text: jsonString,
+      ));
     } catch (e) {
       // If system clipboard fails, at least keep internal clipboard
       _logger.w('Failed to set system clipboard, using internal only', error: e);

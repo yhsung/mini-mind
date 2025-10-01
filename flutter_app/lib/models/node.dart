@@ -3,6 +3,7 @@
 /// This file defines the Dart equivalent of the Rust Node model,
 /// optimized for UI operations, state management, and JSON serialization.
 
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class Node {
     required this.createdAt,
     required this.updatedAt,
     this.parentId,
+    this.size = const Size(120, 80),
     this.tags = const [],
     this.metadata = const {},
     this.style = const NodeStyle(),
@@ -48,6 +50,9 @@ class Node {
 
   /// Position in the mindmap canvas
   final Point position;
+
+  /// Size of the node
+  final Size size;
 
   /// Tags associated with the node
   final List<String> tags;
@@ -375,7 +380,7 @@ class Point {
   double distanceTo(Point other) {
     final dx = x - other.x;
     final dy = y - other.y;
-    return (dx * dx + dy * dy).sqrt();
+    return math.sqrt(dx * dx + dy * dy);
   }
 
   /// Add points

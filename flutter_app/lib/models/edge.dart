@@ -665,7 +665,7 @@ extension EdgeExtensions on Edge {
   double _distanceToLineSegment(Point point, Point start, Point end) {
     final dx = end.x - start.x;
     final dy = end.y - start.y;
-    final length = (dx * dx + dy * dy).sqrt();
+    final length = math.sqrt(dx * dx + dy * dy);
 
     if (length == 0) return point.distanceTo(start);
 

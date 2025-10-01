@@ -4,6 +4,8 @@
 /// conversion utilities for seamless data exchange between Flutter UI
 /// and the Rust core engine.
 
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -65,6 +67,7 @@ class FfiNodeUpdate {
 @JsonSerializable()
 class FfiMindmapData {
   const FfiMindmapData({
+    this.id,
     required this.title,
     required this.rootNodeId,
     required this.nodes,
@@ -72,6 +75,7 @@ class FfiMindmapData {
     this.metadata = const {},
   });
 
+  final String? id;
   final String title;
   final String rootNodeId;
   final List<FfiNodeData> nodes;
@@ -93,6 +97,7 @@ class FileOperationResult {
     this.error,
     this.data,
     this.format,
+    this.fileSize,
   });
 
   final bool success;
@@ -100,6 +105,7 @@ class FileOperationResult {
   final String? error;
   final String? data;
   final FileFormat? format;
+  final int? fileSize;
 
   factory FileOperationResult.fromJson(Map<String, dynamic> json) =>
       _$FileOperationResultFromJson(json);
@@ -311,7 +317,7 @@ class FfiRect {
   double get top => y;
   double get right => x + width;
   double get bottom => y + height;
-  FfiPoint get center => FfiPoint(x + width / 2, y + height / 2);
+  FfiPoint get center => FfiPoint(x: x + width / 2, y: y + height / 2);
 
   factory FfiRect.fromJson(Map<String, dynamic> json) => _$FfiRectFromJson(json);
   Map<String, dynamic> toJson() => _$FfiRectToJson(this);
@@ -332,7 +338,7 @@ class FfiRect {
 /// FFI-compatible node data structure
 @JsonSerializable()
 class FfiNodeData {
-  const FfiNodeData({
+  FfiNodeData({
     required this.id,
     required this.text,
     required this.position,
@@ -341,6 +347,8 @@ class FfiNodeData {
     this.metadata = const {},
     this.tags = const [],
     this.nodeType = NodeType.branch,
+    this.createdAt,
+    this.updatedAt,
     DateTime? createdDate,
     DateTime? updatedDate,
   }) : createdDate = createdDate ?? DateTime.now(),
@@ -354,6 +362,8 @@ class FfiNodeData {
   final Map<String, String> metadata;
   final List<String> tags;
   final NodeType nodeType;
+  final int? createdAt;
+  final int? updatedAt;
   final DateTime createdDate;
   final DateTime updatedDate;
 
@@ -398,15 +408,17 @@ class FfiLayoutResult {
     required this.nodes,
     required this.computationTime,
     this.nodePositions = const {},
+    this.computationTimeMs,
   });
 
   final FfiLayoutType layoutType;
   final List<FfiNodeData> nodes;
   final int computationTime; // Duration in milliseconds
   final Map<String, FfiPoint> nodePositions;
+  final int? computationTimeMs;
 
   Duration get computationTimeDuration => Duration(milliseconds: computationTime);
-  int get computationTimeMs => computationTime;
+  int get computationTimeMsValue => computationTimeMs ?? computationTime;
 
   factory FfiLayoutResult.fromJson(Map<String, dynamic> json) => _$FfiLayoutResultFromJson(json);
   Map<String, dynamic> toJson() => _$FfiLayoutResultToJson(this);
