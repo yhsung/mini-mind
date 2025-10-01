@@ -809,26 +809,14 @@ class MindmapCanvasPainter extends CustomPainter {
 }
 
 /// Extensions for vector math
-extension Vector3 on ui.Offset {
-  Vector3 toVector3([double z = 0.0]) => Vector3(dx, dy, z);
-}
-
-/// Simple 3D vector class for transformations
-class Vector3 {
-  const Vector3(this.x, this.y, this.z);
-
-  final double x;
-  final double y;
-  final double z;
+extension OffsetToVector3 on ui.Offset {
+  vector_math.Vector3 toVector3([double z = 0.0]) => vector_math.Vector3(dx, dy, z);
 }
 
 extension Matrix4Extensions on Matrix4 {
-  Vector3 transform3(Vector3 vector) {
-    final result = this * Column3(vector.x, vector.y, vector.z).xyz;
-    return Vector3(result.x, result.y, result.z);
+  vector_math.Vector3 transform3(vector_math.Vector3 vector) {
+    final vector4 = vector_math.Vector4(vector.x, vector.y, vector.z, 1.0);
+    final result = this * vector4;
+    return vector_math.Vector3(result.x, result.y, result.z);
   }
-}
-
-extension Column3 on Vector3 {
-  Vector3 get xyz => Vector3(x, y, z);
 }

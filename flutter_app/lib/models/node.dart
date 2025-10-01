@@ -10,6 +10,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../bridge/bridge_types.dart';
+import '../utils/color_converter.dart';
 
 part 'node.g.dart';
 
@@ -440,14 +441,19 @@ class NodeStyle {
 
   final NodeShape shape;
   final NodeSize size;
+  @ColorConverter()
   final Color backgroundColor;
+  @ColorConverter()
   final Color borderColor;
+  @ColorConverter()
   final Color textColor;
   final double borderWidth;
   final double borderRadius;
   final double elevation;
   final double fontSize;
+  @FontWeightConverter()
   final FontWeight fontWeight;
+  @EdgeInsetsConverter()
   final EdgeInsets padding;
   final double opacity;
 

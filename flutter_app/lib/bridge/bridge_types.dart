@@ -13,6 +13,126 @@ import '../models/document.dart';
 
 part 'bridge_types.g.dart';
 
+/// File formats supported for import/export
+enum FileFormat {
+  json,
+  opml,
+  markdown,
+  xml,
+  pdf,
+  svg,
+  png,
+  html,
+}
+
+/// Node update types for FFI operations
+@JsonSerializable()
+class FfiNodeUpdate {
+  const FfiNodeUpdate({
+    required this.type,
+    this.text,
+    this.position,
+    this.tags,
+  });
+
+  final String type;
+  final String? text;
+  final FfiPoint? position;
+  final List<String>? tags;
+
+  factory FfiNodeUpdate.text(String text) => FfiNodeUpdate(
+    type: 'text',
+    text: text,
+  );
+
+  factory FfiNodeUpdate.position(FfiPoint position) => FfiNodeUpdate(
+    type: 'position',
+    position: position,
+  );
+
+  factory FfiNodeUpdate.tags(List<String> tags) => FfiNodeUpdate(
+    type: 'tags',
+    tags: tags,
+  );
+
+  factory FfiNodeUpdate.fromJson(Map<String, dynamic> json) =>
+      _$FfiNodeUpdateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FfiNodeUpdateToJson(this);
+}
+
+/// Mindmap data structure for FFI operations
+@JsonSerializable()
+class FfiMindmapData {
+  const FfiMindmapData({
+    required this.title,
+    required this.rootNodeId,
+    required this.nodes,
+    required this.edges,
+    this.metadata = const {},
+  });
+
+  final String title;
+  final String rootNodeId;
+  final List<FfiNodeData> nodes;
+  final List<FfiEdgeData> edges;
+  final Map<String, String> metadata;
+
+  factory FfiMindmapData.fromJson(Map<String, dynamic> json) =>
+      _$FfiMindmapDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FfiMindmapDataToJson(this);
+}
+
+/// File operation result for FFI operations
+@JsonSerializable()
+class FileOperationResult {
+  const FileOperationResult({
+    required this.success,
+    this.filePath,
+    this.error,
+    this.data,
+    this.format,
+  });
+
+  final bool success;
+  final String? filePath;
+  final String? error;
+  final String? data;
+  final FileFormat? format;
+
+  factory FileOperationResult.fromJson(Map<String, dynamic> json) =>
+      _$FileOperationResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FileOperationResultToJson(this);
+}
+
+/// File operation options for FFI operations
+@JsonSerializable()
+class FileOperationOptions {
+  const FileOperationOptions({
+    this.format,
+    this.compress = false,
+    this.includeMetadata = true,
+  });
+
+  final FileFormat? format;
+  final bool compress;
+  final bool includeMetadata;
+
+  factory FileOperationOptions.fromJson(Map<String, dynamic> json) =>
+      _$FileOperationOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FileOperationOptionsToJson(this);
+}
+
+/// Node types for classification
+enum NodeType {
+  root,
+  branch,
+  leaf,
+}
+
 /// FFI-compatible error types that match Rust BridgeError enum
 enum BridgeErrorType {
   nodeNotFound,
@@ -81,6 +201,19 @@ enum FfiLayoutType {
   forceDirected,
 }
 
+extension FfiLayoutTypeExtension on FfiLayoutType {
+  String get displayName {
+    switch (this) {
+      case FfiLayoutType.radial:
+        return 'Radial Layout';
+      case FfiLayoutType.tree:
+        return 'Tree Layout';
+      case FfiLayoutType.forceDirected:
+        return 'Force-Directed Layout';
+    }
+  }
+}
+
 /// FFI-compatible export format types
 enum ExportFormat {
   pdf,
@@ -88,6 +221,23 @@ enum ExportFormat {
   png,
   opml,
   markdown,
+}
+
+extension ExportFormatExtension on ExportFormat {
+  String get displayName {
+    switch (this) {
+      case ExportFormat.pdf:
+        return 'PDF Document';
+      case ExportFormat.svg:
+        return 'SVG Vector';
+      case ExportFormat.png:
+        return 'PNG Image';
+      case ExportFormat.opml:
+        return 'OPML Outline';
+      case ExportFormat.markdown:
+        return 'Markdown Text';
+    }
+  }
 }
 
 /// FFI-compatible point structure
@@ -189,7 +339,12 @@ class FfiNodeData {
     required this.size,
     this.parentId,
     this.metadata = const {},
-  });
+    this.tags = const [],
+    this.nodeType = NodeType.branch,
+    DateTime? createdDate,
+    DateTime? updatedDate,
+  }) : createdDate = createdDate ?? DateTime.now(),
+       updatedDate = updatedDate ?? DateTime.now();
 
   final String id;
   final String text;
@@ -197,6 +352,10 @@ class FfiNodeData {
   final FfiSize size;
   final String? parentId;
   final Map<String, String> metadata;
+  final List<String> tags;
+  final NodeType nodeType;
+  final DateTime createdDate;
+  final DateTime updatedDate;
 
   factory FfiNodeData.fromJson(Map<String, dynamic> json) => _$FfiNodeDataFromJson(json);
   Map<String, dynamic> toJson() => _$FfiNodeDataToJson(this);
@@ -238,13 +397,16 @@ class FfiLayoutResult {
     required this.layoutType,
     required this.nodes,
     required this.computationTime,
+    this.nodePositions = const {},
   });
 
   final FfiLayoutType layoutType;
   final List<FfiNodeData> nodes;
   final int computationTime; // Duration in milliseconds
+  final Map<String, FfiPoint> nodePositions;
 
   Duration get computationTimeDuration => Duration(milliseconds: computationTime);
+  int get computationTimeMs => computationTime;
 
   factory FfiLayoutResult.fromJson(Map<String, dynamic> json) => _$FfiLayoutResultFromJson(json);
   Map<String, dynamic> toJson() => _$FfiLayoutResultToJson(this);

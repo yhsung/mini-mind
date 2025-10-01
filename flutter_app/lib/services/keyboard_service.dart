@@ -466,7 +466,7 @@ class KeyboardService {
     _intentToShortcut = {};
 
     for (final shortcut in _allShortcuts) {
-      final keySet = LogicalKeySet(shortcut.key, ...shortcut.modifiers);
+      final keySet = LogicalKeySet(shortcut.key);
       _shortcuts[keySet] = shortcut.intent;
       _intentToShortcut[shortcut.intent.runtimeType] = shortcut;
     }

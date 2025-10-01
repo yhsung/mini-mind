@@ -5,6 +5,7 @@
 /// state and services for complete desktop application experience.
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class AppMenuItem {
       title: title,
       intent: intent,
       onPressed: onPressed,
-      shortcut: MenuSerializableShortcut(LogicalKeySet(key, ...modifiers)),
+      shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({key, ...modifiers})),
       enabled: enabled,
     );
   }
@@ -134,9 +135,15 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
 
     return MenuBarTheme(
       data: _buildMenuBarTheme(context),
-      child: MenuBar(
-        children: _buildMenus(context, mindmapState, keyboardService),
-        child: widget.child,
+      child: Column(
+        children: [
+          MenuBar(
+            children: _buildMenus(context, mindmapState, keyboardService),
+          ),
+          Expanded(
+            child: widget.child ?? const SizedBox.shrink(),
+          ),
+        ],
       ),
     );
   }
@@ -177,12 +184,12 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
       menuChildren: _buildMenuItems([
         AppMenuItem.command(
           title: 'New',
-          intent: const NewDocumentIntent(),
+          onPressed: () => _handleNew(context),
           key: LogicalKeyboardKey.keyN,
         ),
         AppMenuItem.command(
           title: 'Open...',
-          intent: const OpenDocumentIntent(),
+          onPressed: () => _handleOpen(context),
           key: LogicalKeyboardKey.keyO,
         ),
         AppMenuItem.divider(),
@@ -260,13 +267,13 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
       menuChildren: _buildMenuItems([
         AppMenuItem.command(
           title: 'Undo',
-          intent: const UndoIntent(),
+          onPressed: mindmapState.canUndo ? () => _handleUndo(context) : null,
           key: LogicalKeyboardKey.keyZ,
           enabled: mindmapState.canUndo,
         ),
         AppMenuItem.command(
           title: 'Redo',
-          intent: const RedoIntent(),
+          onPressed: mindmapState.canRedo ? () => _handleRedo(context) : null,
           key: LogicalKeyboardKey.keyY,
           enabled: mindmapState.canRedo,
         ),
@@ -276,10 +283,10 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
           onPressed: mindmapState.hasSelectedNode
               ? () => _handleCut(context)
               : null,
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.keyX,
-          )),
+          })),
           enabled: mindmapState.hasSelectedNode,
         ),
         AppMenuItem(
@@ -287,19 +294,19 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
           onPressed: mindmapState.hasSelectedNode
               ? () => _handleCopy(context)
               : null,
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.keyC,
-          )),
+          })),
           enabled: mindmapState.hasSelectedNode,
         ),
         AppMenuItem(
           title: 'Paste',
           onPressed: () => _handlePaste(context),
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.keyV,
-          )),
+          })),
         ),
         AppMenuItem.divider(),
         AppMenuItem(
@@ -307,7 +314,7 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
           onPressed: mindmapState.hasMindmap
               ? () => _handleSelectAll(context)
               : null,
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.keyA,
           )),
@@ -316,7 +323,7 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
         AppMenuItem.divider(),
         AppMenuItem.command(
           title: 'Find...',
-          intent: const OpenSearchIntent(),
+          onPressed: mindmapState.hasMindmap ? () => _handleFind(context) : null,
           key: LogicalKeyboardKey.keyF,
           enabled: mindmapState.hasMindmap,
         ),
@@ -332,26 +339,26 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
         AppMenuItem(
           title: 'Zoom In',
           onPressed: () => _handleZoomIn(context),
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.equal,
-          )),
+          })),
         ),
         AppMenuItem(
           title: 'Zoom Out',
           onPressed: () => _handleZoomOut(context),
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.minus,
-          )),
+          })),
         ),
         AppMenuItem(
           title: 'Zoom to Fit',
           onPressed: () => _handleZoomToFit(context),
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             Platform.isMacOS ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft,
             LogicalKeyboardKey.digit0,
-          )),
+          })),
         ),
         AppMenuItem.divider(),
         AppMenuItem(
@@ -381,9 +388,9 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
         AppMenuItem(
           title: 'Full Screen',
           onPressed: () => _handleToggleFullScreen(context),
-          shortcut: MenuSerializableShortcut(LogicalKeySet(
+          shortcut: MenuSerializableShortcut(LogicalKeySet.fromSet({
             LogicalKeyboardKey.f11,
-          )),
+          })),
         ),
       ]),
       child: const Text('View'),
@@ -511,7 +518,7 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
 
   void _handleSaveAs(BuildContext context) async {
     final result = await _fileService.saveFile(
-      data: const [], // This would be the actual mindmap data
+      data: Uint8List(0), // This would be the actual mindmap data
       fileName: 'mindmap.json',
       dialogTitle: 'Save Mindmap',
       type: FileType.mindmap,
@@ -529,7 +536,7 @@ class _AppMenuBarState extends ConsumerState<AppMenuBar> {
     final extension = format.name;
 
     final result = await _fileService.saveFile(
-      data: const [], // This would be the exported data
+      data: Uint8List(0), // This would be the exported data
       fileName: 'mindmap.$extension',
       dialogTitle: 'Export Mindmap',
     );

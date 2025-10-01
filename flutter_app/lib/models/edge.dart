@@ -3,6 +3,7 @@
 /// This file defines the Dart equivalent of the Rust Edge model,
 /// representing connections between nodes in the mindmap.
 
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import 'node.dart';
+import '../utils/color_converter.dart';
 
 part 'edge.g.dart';
 
@@ -336,6 +338,7 @@ class EdgeStyle {
   });
 
   final EdgeType type;
+  @ColorConverter()
   final Color color;
   final double width;
   final StrokeType strokeType;
@@ -448,9 +451,13 @@ class EdgeLabelStyle {
   });
 
   final double fontSize;
+  @FontWeightConverter()
   final FontWeight fontWeight;
+  @ColorConverter()
   final Color color;
+  @ColorConverter()
   final Color backgroundColor;
+  @EdgeInsetsConverter()
   final EdgeInsets padding;
   final double borderRadius;
   final double position; // Position along the edge (0.0 to 1.0)
@@ -735,5 +742,3 @@ extension EdgeListExtensions on List<Edge> {
 extension PointAngles on Point {
   double atan2() => math.atan2(y, x);
 }
-
-import 'dart:math' as math;
